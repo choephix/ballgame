@@ -5,6 +5,7 @@ package game {
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Sprite;
 	import starling.events.EnterFrameEvent;
+	import starling.events.Event;
 	import starling.events.KeyboardEvent;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
