@@ -66,17 +66,19 @@ package game {
 			tAction = new TextField( 500, 50, "...", "Verdana", 32, 0x2299FF );
 			layerUI.addChild( tAction );
 			
-			addNewRandomBall();
-			addNewRandomBall();
-			addNewRandomBall();
-			addNewRandomBall();
-			addNewRandomBall();
-			
 			App.stage.addEventListener( EnterFrameEvent.ENTER_FRAME, onEnterFrame );
 			App.stage.addEventListener( TouchEvent.TOUCH, onTouch );
 			App.stage.addEventListener( KeyboardEvent.KEY_UP, onKeyUp );
 			
 			selectAction( SPLIT_VERTICAL );
+			
+			///
+			
+			addNewRandomBall();
+			addNewRandomBall();
+			addNewRandomBall();
+			addNewRandomBall();
+			addNewRandomBall();
 			
 		}
 		
@@ -86,7 +88,14 @@ package game {
 			
 			for (var i:int = 0; i < ballsLen; i++) {
 				with ( balls[ i ] ) {
+					if ( stage == null ) 
+						continue;
 					loopUpdate( e.passedTime );
+					for (var j:int = 0; j < ballsLen; j++) {
+						if ( i == j ) 
+							continue;
+						checkForCollisionWithBall( balls[ j ] );
+					}
 				}
 			}
 			
@@ -183,7 +192,17 @@ package game {
 			balls.push( o );
 			ballsLen++;
 			updateBallSection( o );
+			o.addEventListener( Event.REMOVED_FROM_STAGE, onBallDead );
 			return o;
+			
+		}
+		
+		private function onBallDead( e:Event ):void {
+			
+			e.currentTarget.removeEventListener(Event.REMOVED_FROM_STAGE, onBallDead);
+			
+			balls.splice( balls.indexOf( e.currentTarget as Ball ), 1 );
+			ballsLen--;
 			
 		}
 		
