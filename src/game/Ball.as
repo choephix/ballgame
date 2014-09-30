@@ -68,12 +68,12 @@ package game {
 				bounds.right = 2.0 * section.right - bounds.right;
 				force.x *= -1.0;
 				onEdgeCollision();
-			} else
+			}
 			if ( bounds.top <= section.top )  {
 				bounds.top = 2.0 * section.top - bounds.top;
 				force.y *= -1.0;
 				onEdgeCollision();
-			}
+			} else
 			if ( bounds.bottom >= section.bottom )  {
 				bounds.bottom = 2.0 * section.bottom - bounds.bottom;
 				force.y *= -1.0;
@@ -84,13 +84,13 @@ package game {
 			
 		}
 		
-		private var blacklisted:Ball;
+		private var blacklisted:Ball; // must be vector
 		public function checkForCollisionWithBall( subject:Ball ):void {
 			
-			if ( blacklisted == subject )
-				return;
-			
 			if ( radius * 2.0 > Point.distance( position, subject.position ) ) {
+					
+				if ( blacklisted == subject )
+					return;
 				
 				var fi:Number = getAngle( position.x, position.y, subject.x, subject.y );
 				var fa:Number = getAngle( force.x, force.y );
@@ -102,6 +102,9 @@ package game {
 				
 				blacklisted = subject;
 				
+			} else {
+				if ( blacklisted == subject )
+					blacklisted = null;
 			}
 			
 		}
