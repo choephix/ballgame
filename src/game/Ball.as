@@ -82,22 +82,22 @@ package game {
 			
 			if ( bounds.left <= section.left )  {
 				bounds.left = 2.0 * section.left - bounds.left;
-				force.x *= -1.0;
+				force.x = Math.abs( force.x );
 				onEdgeCollision();
 			}  else
 			if ( bounds.right >= section.right )  {
 				bounds.right = 2.0 * section.right - bounds.right;
-				force.x *= -1.0;
+				force.x = -Math.abs( force.x );
 				onEdgeCollision();
 			}
 			if ( bounds.top <= section.top )  {
 				bounds.top = 2.0 * section.top - bounds.top;
-				force.y *= -1.0;
+				force.y = Math.abs( force.y );
 				onEdgeCollision();
 			} else
 			if ( bounds.bottom >= section.bottom )  {
 				bounds.bottom = 2.0 * section.bottom - bounds.bottom;
-				force.y *= -1.0;
+				force.y = -Math.abs( force.y );
 				onEdgeCollision();
 			}
 			

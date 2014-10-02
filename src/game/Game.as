@@ -75,8 +75,8 @@ package game {
 			
 			///
 			
-			addNewBall( arenaBounds.width * 0.5, arenaBounds.height * 0.5, 0, 0 );
-			return;
+			//addNewBall( arenaBounds.width * 0.5, arenaBounds.height * 0.5, 0, 0 );
+			//return;
 			
 			addNewRandomBall();
 			addNewRandomBall();
@@ -113,14 +113,12 @@ package game {
 				return;
 			}
 			
-			addNewBall( t.getLocation( App.stage ).x, t.getLocation( App.stage ).y, Math.PI * 0.5, 2 );
 			//addNewBall( t.getLocation( App.stage ).x, t.getLocation( App.stage ).y, Math.PI * Math.random(), 2 );
-			return;
+			//addNewBall( t.getLocation( App.stage ).x, t.getLocation( App.stage ).y, Math.PI * 0.5, 2 );
+			//return;
 			
-			//trace( "TAP!" );
 			for (var i:int = 0; i < sectionsLen; i++) {
 				if ( t.isTouching( sections[ i ].quad ) ) {
-					//trace( "S#"+i );
 					onSectionTouched( sections[ i ], t.getLocation( App.stage ) );
 					return;
 				}
