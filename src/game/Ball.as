@@ -5,12 +5,19 @@ package game {
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
 	import starling.display.Quad;
+	import starling.text.TextField;
+	import starling.utils.HAlign;
+	import starling.utils.VAlign;
 	
 	/**
 	 * ...
 	 * @author choephix
 	 */
 	public class Ball extends DisplayObjectContainer {
+		
+		public static var BALL_DEATH:String;
+		
+		///
 		
 		private static var NEXT_UID:uint = 1;
 		private static const SPEED_MULTIPLIER:Number = 10;
@@ -19,6 +26,7 @@ package game {
 		public var position:Point;
 		public var force:Point;
 		public var section:Section;
+		private var img:Image;
 		
 		public function Ball() {
 			
@@ -28,15 +36,24 @@ package game {
 			this.position = new Point();
 			this.force = new Point();
 			
-			var q:DisplayObject;
-			q = new Image ( App.assets.getTexture( "o" ) );
+			img = new Image ( App.assets.getTexture( "o" ) );
 			//q = new Quad( 50, 50, 0xFf8800 );
-			q.width =
-			q.height = radius * 2.0;
-			q.alignPivot();
-			addChild( q );
+			img.width =
+			img.height = radius * 2.0;
+			img.alignPivot();
+			addChild( img );
 			
 			touchable = false;
+			
+			var t:TextField = new TextField( radius * 2.0, radius * 2.0, uid.toString() );
+			t.bold = true;
+			t.fontSize = 30.0;
+			t.color  = 0x7788aa;
+			t.color  = 0xAABBDD;
+			t.hAlign = HAlign.CENTER;
+			t.vAlign = VAlign.CENTER;
+			t.alignPivot();
+			addChild( t );
 			
 		}
 		
@@ -55,6 +72,10 @@ package game {
 		}
 		
 		public function loopUpdate( timeElapsed:Number ):void {
+			
+			if ( section.width < radius * 2.0 || section.height < radius * 2.0 ) {
+				return;
+			}
 			
 			x += timeElapsed * force.x;
 			y += timeElapsed * force.y;

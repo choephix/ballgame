@@ -75,6 +75,9 @@ package game {
 			
 			///
 			
+			addNewBall( arenaBounds.width * 0.5, arenaBounds.height * 0.5, 0, 0 );
+			return;
+			
 			addNewRandomBall();
 			addNewRandomBall();
 			addNewRandomBall();
@@ -109,6 +112,10 @@ package game {
 			if ( t == null ) {
 				return;
 			}
+			
+			addNewBall( t.getLocation( App.stage ).x, t.getLocation( App.stage ).y, Math.PI * 0.5, 2 );
+			//addNewBall( t.getLocation( App.stage ).x, t.getLocation( App.stage ).y, Math.PI * Math.random(), 2 );
+			return;
 			
 			//trace( "TAP!" );
 			for (var i:int = 0; i < sectionsLen; i++) {
