@@ -22,19 +22,19 @@ package game {
 		private static var NEXT_UID:uint = 1;
 		private static const SPEED_MULTIPLIER:Number = 10;
 		public var uid:uint = 0;
-		public var radius:Number = 25.0;
+		public var radius:Number;
 		public var position:Point;
 		public var force:Point;
 		public var section:Section;
 		private var img:Image;
 		
-		public function Ball() {
+		public function Ball( radius:Number = 25.0 ) {
 			
-			this.uid = NEXT_UID;
-			NEXT_UID++;
-			
+			this.radius = radius;
 			this.position = new Point();
 			this.force = new Point();
+			this.uid = NEXT_UID;
+			NEXT_UID++;
 			
 			img = new Image ( App.assets.getTexture( "o" ) );
 			//q = new Quad( 50, 50, 0xFf8800 );
