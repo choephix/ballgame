@@ -47,7 +47,7 @@ package game {
 			
 			var t:TextField = new TextField( radius * 2.0, radius * 2.0, uid.toString() );
 			t.bold = true;
-			t.fontSize = 30.0;
+			t.fontSize = 22.0;
 			t.color  = 0x7788aa;
 			t.color  = 0xAABBDD;
 			t.hAlign = HAlign.CENTER;
@@ -109,7 +109,7 @@ package game {
 		public function checkForCollisionWithBall( subject:Ball ):void {
 			
 			if ( radius * 2.0 > Point.distance( position, subject.position ) ) {
-					
+				
 				if ( blacklisted == subject )
 					return;
 				

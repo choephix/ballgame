@@ -18,9 +18,6 @@ package game {
 	 */
 	public class Game {
 		
-		static public const SPLIT_VERTICAL:int = 0;
-		static public const SPLIT_HORISONTAL:int = 2;
-		
 		private var arenaBounds:Rectangle;
 		private var arena:DisplayObjectContainer;
 		private var balls:Vector.<Ball>;
@@ -29,7 +26,7 @@ package game {
 		private var sections:Vector.<Section>;
 		private var sectionsLen:int = 0;
 		
-		private var selectedAction:int = SPLIT_VERTICAL;
+		private var selectedAction:UserAction;
 		
 		private var layerSections:DisplayObjectContainer;
 		private var layerWalls:DisplayObjectContainer;
@@ -71,7 +68,7 @@ package game {
 			App.stage.addEventListener( TouchEvent.TOUCH, onTouch );
 			App.stage.addEventListener( KeyboardEvent.KEY_UP, onKeyUp );
 			
-			selectAction( SPLIT_VERTICAL );
+			selectAction( UserAction.SPLIT_VERTICAL );
 			
 			///
 			
@@ -113,9 +110,11 @@ package game {
 				return;
 			}
 			
-			//addNewBall( t.getLocation( App.stage ).x, t.getLocation( App.stage ).y, Math.PI * Math.random(), 2 );
-			//addNewBall( t.getLocation( App.stage ).x, t.getLocation( App.stage ).y, Math.PI * 0.5, 2 );
-			//return;
+			if ( selectedAction == UserAction.ADD_BALL ) {
+				addNewBall( t.getLocation( App.stage ).x, t.getLocation( App.stage ).y, Math.PI * Math.random(), 2 );
+				//addNewBall( t.getLocation( App.stage ).x, t.getLocation( App.stage ).y, Math.PI * 0.5, 2 );
+				return;
+			}
 			
 			for (var i:int = 0; i < sectionsLen; i++) {
 				if ( t.isTouching( sections[ i ].quad ) ) {
@@ -128,9 +127,11 @@ package game {
 		
 		private function onKeyUp(e:KeyboardEvent):void {
 			
+			const a:Array = [ UserAction.SPLIT_VERTICAL, UserAction.SPLIT_HORISONTAL, UserAction.ADD_BALL ];
+			
 			if ( e.keyCode == Keyboard.SPACE ) {
 				
-				selectAction( selectedAction == SPLIT_VERTICAL ? SPLIT_HORISONTAL : SPLIT_VERTICAL );
+				selectAction( a[ ( a.indexOf( selectedAction ) + 1 ) % a.length ] );
 				
 			}
 			
@@ -138,11 +139,11 @@ package game {
 		
 		private function onSectionTouched( section:Section, location:Point ):void {
 			
-			if ( selectedAction == SPLIT_VERTICAL ) {
+			if ( selectedAction == UserAction.SPLIT_VERTICAL ) {
 				createSection( section.left, section.top, location.x, section.bottom );
 				createSection( location.x, section.top, section.right, section.bottom );
 			} else 
-			if ( selectedAction == SPLIT_HORISONTAL ) {
+			if ( selectedAction == UserAction.SPLIT_HORISONTAL ) {
 				createSection( section.left, section.top, section.right, location.y );
 				createSection( section.left, location.y, section.right, section.bottom );
 			}
@@ -225,10 +226,10 @@ package game {
 		
 		///
 		
-		private function selectAction( a:int ):void {
+		private function selectAction( a:UserAction ):void {
 			
 			selectedAction = a;
-			tAction.text = a == SPLIT_VERTICAL ? "| VERTICAL" : "_ HORISONTAL";
+			tAction.text = a.name;
 			
 		}
 		
