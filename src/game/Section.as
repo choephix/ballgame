@@ -17,11 +17,11 @@ package game {
 			super( left, top, right - left, bottom - top );
 			
 			///THE DEBUG QUAD
-			var clr:uint = Math.random() * 0x444444;
+			var clr:uint = Math.random() * 0xFFFFFF;
 			quad = new Quad( width, height, clr );
 			quad.x = x;
 			quad.y = y;
-			
+			quad.alpha = 0.333;
 		}
 	
 	}
