@@ -1,6 +1,7 @@
 package game {
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import starling.core.Starling;
 	import starling.display.DisplayObject;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
@@ -90,6 +91,7 @@ package game {
 				force.x = -Math.abs( force.x );
 				onEdgeCollision();
 			}
+			
 			if ( bounds.top <= section.top )  {
 				bounds.top = 2.0 * section.top - bounds.top;
 				force.y = Math.abs( force.y );
@@ -102,7 +104,6 @@ package game {
 			}
 			
 			position.setTo( x, y );
-			
 		}
 		
 		private var blacklisted:Ball; // must be vector
@@ -119,15 +120,29 @@ package game {
 				
 				startMoving( fa, force.length / SPEED_MULTIPLIER );
 				
-				trace( "BAM!", this, subject );
-				
 				blacklisted = subject;
+				
+				onBallCollision();
 				
 			} else {
 				if ( blacklisted == subject )
 					blacklisted = null;
 			}
 			
+		}
+		
+		private function onBallCollision():void {
+			//trace( "BAM!", this, subject );
+			
+			var o:Image;
+			o = new Image ( App.assets.getTexture( "o" ) );
+			o.color = 0xFF1111;
+			o.width =
+			o.height = radius * 2.0;
+			o.alignPivot();
+			addChild( o );
+			
+			Starling.
 		}
 		
 		private function onEdgeCollision():void {
@@ -137,19 +152,25 @@ package game {
 		public function die():void {
 			
 			removeFromParent( true );
-			
 		}
 		
 		public function toString():String {
 			
 			return uid.toString();
-			
 		}
 		
 		private function getAngle( x1:Number, y1:Number, x2:Number = 0.0, y2:Number = 0.0 ):Number{
 			var dx:Number = x2 - x1;
 			var dy:Number = y2 - y1;
 			return Math.atan2( dy, dx );
+		}
+		
+		public function get color():uint {
+			return img.color;
+		}
+		
+		public function set color( value:uint ):void {
+			img.color = value;
 		}
 		
 	}

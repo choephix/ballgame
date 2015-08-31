@@ -37,6 +37,9 @@ package game {
 		
 		private var tAction:TextField;
 		
+		private var me:Ball;
+		private static var helperPoint:Point = new Point();
+		
 		///
 		
 		public function Game() {
@@ -75,6 +78,11 @@ package game {
 			//addNewBall( arenaBounds.width * 0.5, arenaBounds.height * 0.5, 0, 0 );
 			//return;
 			
+			me = addNewBall( .5 * arenaBounds.width, .5 * arenaBounds.height, .0, .0, 0x22CCFF );
+			
+			addNewRandomBall();
+			addNewRandomBall();
+			addNewRandomBall();
 			addNewRandomBall();
 			addNewRandomBall();
 			addNewRandomBall();
@@ -104,23 +112,23 @@ package game {
 		
 		private function onTouch(e:TouchEvent):void {
 			
-			var t:Touch = e.getTouch( App.stage, TouchPhase.ENDED );
+			const SPD:Number = 2.5;
 			
-			if ( t == null ) {
-				return;
+			var t:Touch;
+			
+			t = e.getTouch( App.stage, TouchPhase.BEGAN );
+			if ( t != null )
+			{
+				me.force.x *= 0.1;
+				me.force.y *= 0.1;
 			}
 			
-			if ( selectedAction == UserAction.ADD_BALL ) {
-				addNewBall( t.getLocation( App.stage ).x, t.getLocation( App.stage ).y, Math.PI * Math.random(), 2 );
-				//addNewBall( t.getLocation( App.stage ).x, t.getLocation( App.stage ).y, Math.PI * 0.5, 2 );
-				return;
-			}
-			
-			for (var i:int = 0; i < sectionsLen; i++) {
-				if ( t.isTouching( sections[ i ].quad ) ) {
-					onSectionTouched( sections[ i ], t.getLocation( App.stage ) );
-					return;
-				}
+			t = e.getTouch( App.stage, TouchPhase.MOVED );
+			if ( t != null )
+			{
+				t.getMovement( App.stage, helperPoint );
+				me.force.x += helperPoint.x * SPD;
+				me.force.y += helperPoint.y * SPD;
 			}
 			
 		}
@@ -184,14 +192,15 @@ package game {
 				arenaBounds.x + arenaBounds.width * Math.random(),
 				arenaBounds.y + arenaBounds.height * Math.random(),
 				Math.random() * Math.PI, 
-				Math.random() + 2
+				.44 * ( Math.random() + 1 ),
+				0xFF4444
 				);
-			
 		}
 		
-		private function addNewBall( x:Number, y:Number, direction:Number, speed:Number ):Ball {
+		private function addNewBall( x:Number, y:Number, direction:Number, speed:Number, color:uint ):Ball {
 			
 			var o:Ball = new Ball();
+			o.color = color;
 			o.x = x;
 			o.y = y;
 			o.startMoving( direction, speed * 50 );
@@ -201,7 +210,6 @@ package game {
 			updateBallSection( o );
 			o.addEventListener( Event.REMOVED_FROM_STAGE, onBallDead );
 			return o;
-			
 		}
 		
 		private function onBallDead( e:Event ):void {
