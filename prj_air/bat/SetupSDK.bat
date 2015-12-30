@@ -1,7 +1,7 @@
 :user_configuration
 
 :: Path to Flex SDK
-set FLEX_SDK=D:\projects\libs\FlexSDK\AIRSDK_Compiler_14
+set FLEX_SDK=D:\Tools - SDKs\Flex 4.14.1 AIR 19
 
 
 :validation
