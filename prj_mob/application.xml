@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<application xmlns="http://ns.adobe.com/air/application/14.0">
+<application xmlns="http://ns.adobe.com/air/application/19.0">
   <id>air.Prjmob</id>
   <versionNumber>0.1</versionNumber>
   <supportedProfiles>mobileDevice</supportedProfiles>
@@ -17,16 +17,11 @@
 <string>UIStatusBarStyleBlackOpaque</string>
 <key>UIRequiresPersistentWiFi</key>
 <string>NO</string>
-<key>UIPrerenderedIcon</key>
-<true />
 <key>UIApplicationExitsOnSuspend</key>
 <true />
 <key>UIDeviceFamily</key>
 <array>
-	<!-- iPhone support -->
 	<string>1</string>
-	<!-- iPad support -->
-	<!--<string>2</string>-->
 </array>]]></InfoAdditions>
     <requestedDisplayResolution>high</requestedDisplayResolution>
   </iPhone>
@@ -41,7 +36,8 @@
     <!--<depthAndStencil>true</depthAndStencil>-->
     <!-- required for 3D -->
     <systemChrome>standard</systemChrome>
-    <aspectRatio>portrait</aspectRatio>
+    <aspectRatio>landscape</aspectRatio>
+    <autoOrients>false</autoOrients>
   </initialWindow>
   <icon>
     <image48x48>icons/icon_48.png</image48x48>

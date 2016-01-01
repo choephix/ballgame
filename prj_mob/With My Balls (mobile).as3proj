@@ -4,21 +4,21 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="bin\Prjmob.swf" />
+    <movie path="..\bin\Prjmob.swf" />
     <movie fps="30" />
     <movie width="480" />
     <movie height="762" />
-    <movie version="13" />
+    <movie version="0" />
     <movie minorVersion="0" />
     <movie platform="AIR Mobile" />
     <movie background="#FFFFFF" />
-    <movie preferredSDK="AIR 14.0.0;14.0.0;" />
+    <movie preferredSDK="Apache Flex 4.14.1 FP19.0 AIR19.0 en_US;4.14.1;" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="..\src" />
-    <class path="..\assets" />
-    <class path="..\lib" />
+    <class path="..\..\_prototype_01\lib" />
+    <class path="..\..\_prototype_01\src" />
+    <class path="..\..\_prototype_01\bat" />
   </classpaths>
   <!-- Build options -->
   <build>
@@ -89,11 +89,8 @@
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="Custom" />
-    <option testMovieCommand="Run.bat" />
+    <option testMovieCommand="bat\RunApp.bat" />
   </options>
   <!-- Plugin storage -->
-  <storage>
-    <entry key="at_enabled"><![CDATA[0]]></entry>
-    <entry key="at_password"><![CDATA[]]></entry>
-  </storage>
+  <storage />
 </project>
