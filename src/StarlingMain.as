@@ -1,5 +1,6 @@
 package {
 	import game.Game;
+	import starling.core.Starling;
 	import starling.display.BlendMode;
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -46,12 +47,20 @@ package {
 			
 		}
 		
-		private function onAssetsLoaded():void {
+		private function onAssetsLoaded():void 
+		{
+			
+			
+			startGame();
+		}
+		
+		private function startGame():void {
 			
 			/// INIT GAME
 			
 			var g:Game = new Game();
-			g.start();
+			g.initialize();
+			g.onDestroyedCallback = onAssetsLoaded;
 			
 		}
 	

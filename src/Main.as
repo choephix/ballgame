@@ -111,6 +111,8 @@ package {
 			
 			starling.antiAliasing = 0;
 			starling.simulateMultitouch = true;
+			
+			//starling.showStatsAt("right", "top");
 
 			initWidth = stage.stageWidth;
 			initHeight = stage.stageHeight;

@@ -27,7 +27,11 @@ package game {
 		public var position:Point;
 		public var force:Point;
 		public var section:Section;
+		public var type:BallType;
+		
+		private var shadow:Image;
 		private var img:Image;
+		private var blacklisted:Ball; // must be vector
 		
 		public function Ball( radius:Number = 25.0 ) {
 			
@@ -37,8 +41,16 @@ package game {
 			this.uid = NEXT_UID;
 			NEXT_UID++;
 			
+			shadow = new Image ( App.assets.getTexture( "o" ) );
+			shadow.width =
+			shadow.height = radius * 2.0;
+			shadow.alignPivot();
+			shadow.y = 2.0;
+			shadow.alpha = .40;
+			shadow.color = 0x0;
+			addChild( shadow );
+			
 			img = new Image ( App.assets.getTexture( "o" ) );
-			//q = new Quad( 50, 50, 0xFf8800 );
 			img.width =
 			img.height = radius * 2.0;
 			img.alignPivot();
@@ -54,7 +66,7 @@ package game {
 			t.hAlign = HAlign.CENTER;
 			t.vAlign = VAlign.CENTER;
 			t.alignPivot();
-			addChild( t );
+			//addChild( t );
 			
 		}
 		
@@ -73,6 +85,10 @@ package game {
 		}
 		
 		public function loopUpdate( timeElapsed:Number ):void {
+			
+			//HACK
+			if ( section == null )
+				return;
 			
 			if ( section.width < radius * 2.0 || section.height < radius * 2.0 ) {
 				return;
@@ -106,8 +122,10 @@ package game {
 			position.setTo( x, y );
 		}
 		
-		private var blacklisted:Ball; // must be vector
 		public function checkForCollisionWithBall( subject:Ball ):void {
+			
+			if ( subject.type == BallType.TARGET )
+				return;
 			
 			if ( radius * 2.0 > Point.distance( position, subject.position ) ) {
 				
@@ -122,7 +140,7 @@ package game {
 				
 				blacklisted = subject;
 				
-				onBallCollision();
+				onBallCollision( subject );
 				
 			} else {
 				if ( blacklisted == subject )
@@ -131,18 +149,33 @@ package game {
 			
 		}
 		
-		private function onBallCollision():void {
-			//trace( "BAM!", this, subject );
+		private function onBallCollision( other:Ball ):void {
 			
-			var o:Image;
-			o = new Image ( App.assets.getTexture( "o" ) );
-			o.color = 0xFF1111;
-			o.width =
-			o.height = radius * 2.0;
-			o.alignPivot();
-			addChild( o );
+			//trace( "BAM!", this, other );
 			
-			Starling.
+			if ( type == BallType.PLAYER && other.type == BallType.ENEMY )
+			{
+				xplo( 0xFF1111, .000 );
+				xplo( 0xFF1111, .100 );
+				xplo( 0xFF1111, .200 );
+				xplo( 0xFF1111, .300 );
+				die();
+			}
+			
+			else
+			
+			if ( type == BallType.TARGET && other.type == BallType.PLAYER )
+			{
+				xplo( 0xFFFFFF );
+				die();
+			}
+			
+			else
+			
+			if ( type == BallType.ENEMY )
+			{
+				xplo( 0xFF1111 );
+			}
 		}
 		
 		private function onEdgeCollision():void {
@@ -151,7 +184,30 @@ package game {
 		
 		public function die():void {
 			
+			blacklisted = null;
 			removeFromParent( true );
+		}
+		
+		//TODO onDestroyed()
+		
+		private function xplo( color:uint=0xFF1111, delay:Number=0.0 ):void
+		{
+			var o:Image;
+			o = new Image ( App.assets.getTexture( "o" ) );
+			o.alpha = 0.85;
+			o.color = color;
+			o.width =
+			o.height = radius * 2.0;
+			o.alignPivot();
+			
+			o.scaleX = 0.0;
+			o.scaleY = 0.0;
+			o.x = x;
+			o.y = y;
+			parent.addChild( o );
+			Starling.juggler.tween( o, .200, { 
+				delay : delay, alpha : 0.0, scaleX : 2.0, scaleY : 2.0, 
+				onComplete : o.removeFromParent, onCompleteArgs : [true] } );
 		}
 		
 		public function toString():String {
