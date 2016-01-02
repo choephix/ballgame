@@ -10,13 +10,13 @@ package game
 	{
 		public var dots:Vector.<GameArenaAnalizer_Point>;
 		public var dotsCount:int;
-		private var bounds:Rectangle;
+		private var area:GameArea;
 		private var _helperPoint:Point;
 		private var _helperDot:GameArenaAnalizer_Point;
 		
-		public function initialize( bounds:Rectangle, fidelityX:int=32, fidelityY:int=18 ):void
+		public function initialize( area:GameArea, fidelityX:int=32, fidelityY:int=18 ):void
 		{
-			this.bounds = bounds;
+			this.area = area;
 			
 			dots = new Vector.<GameArenaAnalizer_Point>();
 			
@@ -30,10 +30,10 @@ package game
 				{
 					o = new GameArenaAnalizer_Point();
 					
-					o.x = bounds.x + ( ix + .5 ) * bounds.width / fidelityX;
-					o.y = bounds.y + ( iy + .5 ) * bounds.height / fidelityY;
+					o.x =( ix + .5 ) * area.width / fidelityX;
+					o.y =( iy + .5 ) * area.height / fidelityY;
 					
-					o.edgeDist = Math.pow( 1.0 - Math.max( Math.abs( 2.0 * o.x / bounds.width - 1.0 ), Math.abs( 2.0 * o.y / bounds.height - 1.0 ) ), 0.75 );
+					o.edgeDist = Math.pow( 1.0 - Math.max( Math.abs( 2.0 * o.x / area.width - 1.0 ), Math.abs( 2.0 * o.y / area.height - 1.0 ) ), 0.75 );
 					
 					dotsCount = dots.push( o );
 				}

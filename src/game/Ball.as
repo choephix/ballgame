@@ -26,7 +26,6 @@ package game {
 		public var radius:Number;
 		public var position:Point;
 		public var force:Point;
-		public var section:Section;
 		public var type:BallType;
 		
 		private var shadow:Image;
@@ -84,11 +83,7 @@ package game {
 			
 		}
 		
-		public function loopUpdate( timeElapsed:Number ):void {
-			
-			//HACK
-			if ( section == null )
-				return;
+		public function loopUpdate( timeElapsed:Number, section:GameArea ):void {
 			
 			if ( section.width < radius * 2.0 || section.height < radius * 2.0 ) {
 				return;
@@ -124,8 +119,8 @@ package game {
 		
 		public function checkForCollisionWithBall( subject:Ball ):void {
 			
-			if ( subject.type == BallType.TARGET )
-				return;
+			//if ( subject.type == BallType.TARGET )
+				//return;
 			
 			if ( radius * 2.0 > Point.distance( position, subject.position ) ) {
 				
@@ -179,7 +174,7 @@ package game {
 		}
 		
 		private function onEdgeCollision():void {
-			
+			xplo( 0xFF1111 );
 		}
 		
 		public function die():void {

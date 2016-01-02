@@ -22,19 +22,13 @@ package game {
 		
 		public var onDestroyedCallback:Function;
 		
-		private var arenaBounds:Rectangle;
-		private var arena:DisplayObjectContainer;
+		private var gameArea:GameArea;
+		private var rootSprite:DisplayObjectContainer;
 		private var balls:Vector.<Ball>;
 		private var ballsLen:int = 0;
 		
-		private var sections:Vector.<Section>;
-		private var sectionsLen:int = 0;
-		
-		private var selectedAction:UserAction;
-		
-		private var layerSections:DisplayObjectContainer;
+		private var layerBackground:BackgroundLayer;
 		private var layerDebug:DebugLayer;
-		private var layerWalls:DisplayObjectContainer;
 		private var layerBalls:DisplayObjectContainer;
 		private var layerUI:DisplayObjectContainer;
 		
@@ -53,48 +47,44 @@ package game {
 		
 		public function Game() {
 			
-			arena = App.stage;
+			rootSprite = App.stage;
 			
-			sections = new Vector.<Section>();
 			balls = new Vector.<Ball>();
 			
-			layerSections = new Sprite();
+			layerBackground = new BackgroundLayer();
 			layerDebug = new DebugLayer();
-			layerWalls = new Sprite();
 			layerBalls = new Sprite();
 			layerUI = new Sprite();
-			arena.addChild( layerSections );
-			arena.addChild( layerDebug );
-			arena.addChild( layerWalls );
-			arena.addChild( layerBalls );
-			arena.addChild( layerUI );
+			rootSprite.addChild( layerBackground );
+			rootSprite.addChild( layerDebug );
+			rootSprite.addChild( layerBalls );
+			rootSprite.addChild( layerUI );
 		}
 		
 		public function initialize():void {
 			
-			arenaBounds = createSection( 0, 50, App.stage.stageWidth, App.stage.stageHeight );
+			gameArea = new GameArea( App.stage.stageWidth, App.stage.stageHeight - 50 );
+			layerDebug.y = 50;
+			layerBalls.y = 50;
 			
 			analizer = new GameArenaAnalizer();
-			analizer.initialize( arenaBounds );
-			
+			analizer.initialize( gameArea );
 			layerDebug.initialize( analizer );
-			//layerDebug.x = arenaBounds.x;
-			//layerDebug.y = arenaBounds.y;
-			
-			App.stage.addEventListener( EnterFrameEvent.ENTER_FRAME, onEnterFrame );
-			App.stage.addEventListener( TouchEvent.TOUCH, onTouch );
-			App.stage.addEventListener( KeyboardEvent.KEY_UP, onKeyUp );
 			
 			tAction = new TextField( 500, 100, "...", "Verdana", 32, 0xFFFFFF );
 			tAction.vAlign = "top";
 			layerUI.addChild( tAction );
+			
+			App.stage.addEventListener( EnterFrameEvent.ENTER_FRAME, onEnterFrame );
+			App.stage.addEventListener( TouchEvent.TOUCH, onTouch );
+			App.stage.addEventListener( KeyboardEvent.KEY_UP, onKeyUp );
 			
 			///
 			
 			//addNewBall( arenaBounds.width * 0.5, arenaBounds.height * 0.5, 0, 0 );
 			//return;
 			
-			playerBall = addNewBall( .5 * arenaBounds.width, .5 * arenaBounds.height, .0, .0, 0x22CCFF, BallType.PLAYER );
+			playerBall = addNewBall( .5 * gameArea.width, .5 * gameArea.height, .0, .0, 0x22CCFF, BallType.PLAYER );
 				
 			markThings();
 			
@@ -111,8 +101,8 @@ package game {
 			for ( var i:int = 0; i < 5; i++ ) 
 			{
 				addNewBall(
-					arenaBounds.x + INITIAL_ENEMY_POSITIONS[ 2*i + 0 ] * arenaBounds.width,
-					arenaBounds.y + INITIAL_ENEMY_POSITIONS[ 2*i + 1 ] * arenaBounds.height,
+					INITIAL_ENEMY_POSITIONS[ 2*i + 0 ] * gameArea.width,
+					INITIAL_ENEMY_POSITIONS[ 2*i + 1 ] * gameArea.height,
 					Math.random() * Math.PI * 2.0,
 					.44 * ( Math.random() + 1.0 ),
 					//0.0,
@@ -121,8 +111,8 @@ package game {
 			}
 			
 			addNewBall(
-				INITIAL_ENEMY_POSITIONS[ 2*5 + 0 ] * arenaBounds.width,
-				INITIAL_ENEMY_POSITIONS[ 2*5 + 1 ] * arenaBounds.height,
+				INITIAL_ENEMY_POSITIONS[ 2*5 + 0 ] * gameArea.width,
+				INITIAL_ENEMY_POSITIONS[ 2*5 + 1 ] * gameArea.height,
 				Math.random() * Math.PI * 2.0,
 				2.0, 0xFF44FF, BallType.ENEMY
 				);
@@ -143,28 +133,22 @@ package game {
 			App.stage.removeEventListener( TouchEvent.TOUCH, onTouch );
 			App.stage.removeEventListener( KeyboardEvent.KEY_UP, onKeyUp );
 			
-			arenaBounds = null;
+			for ( var i:int = 0; i < ballsLen; i++)
+				balls[ i ].removeEventListener( Event.REMOVED_FROM_STAGE, onBallDead );
 			
-			layerSections.removeFromParent( true );
-			layerSections = null;
+			layerBackground.removeFromParent( true );
+			layerBackground = null;
 			layerDebug.removeFromParent( true );
 			layerDebug = null;
-			layerWalls.removeFromParent( true );
-			layerWalls = null;
 			layerBalls.removeFromParent( true );
 			layerBalls = null;
 			layerUI.removeFromParent( true );
 			layerUI = null;
-			arena.removeFromParent( true );
-			arena = null;
+			rootSprite.removeFromParent( true );
+			rootSprite = null;
 			
 			balls.length = 0;
 			balls = null;
-			
-			sections.length = 0;
-			sections = null;
-			
-			selectedAction = null;
 			
 			tAction.removeFromParent( true );
 			tAction = null;
@@ -177,10 +161,6 @@ package game {
 		
 		private function spawnTarget():void 
 		{
-			//HACK
-			if ( arenaBounds == null )
-				return;
-			
 			var p:GameArenaAnalizer_Point = analizer.getCenterishPoint( 0.0, -1.0, 0.0005 );
 				
 			addNewBall(
@@ -195,10 +175,6 @@ package game {
 		
 		private function spawnRegularEnemy():Ball 
 		{
-			//HACK
-			if ( arenaBounds == null )
-				return null;
-			
 			var p:GameArenaAnalizer_Point = analizer.getCenterishPoint( -1.0, -1.0, 0.000125 );
 				
 			return addNewBall(
@@ -214,10 +190,6 @@ package game {
 		
 		private function spawnFastEnemy():Ball 
 		{
-			//HACK
-			if ( arenaBounds == null )
-				return null;
-			
 			var p:GameArenaAnalizer_Point = analizer.getCenterishPoint( -1.0, -1.0, 0.000125 );
 				
 			return addNewBall(
@@ -241,7 +213,7 @@ package game {
 					with ( balls[ i ] ) {
 						if ( stage == null ) 
 							continue;
-						loopUpdate( e.passedTime );
+						loopUpdate( e.passedTime, gameArea );
 						for ( j = 0; j < ballsLen; j++) {
 							if ( i == j ) 
 								continue;
@@ -315,45 +287,6 @@ package game {
 			layerDebug.update();
 		}
 		
-		private function onSectionTouched( section:Section, location:Point ):void {
-			
-			if ( selectedAction == UserAction.SPLIT_VERTICAL ) {
-				createSection( section.left, section.top, location.x, section.bottom );
-				createSection( location.x, section.top, section.right, section.bottom );
-			} else 
-			if ( selectedAction == UserAction.SPLIT_HORISONTAL ) {
-				createSection( section.left, section.top, section.right, location.y );
-				createSection( section.left, location.y, section.right, section.bottom );
-			}
-			
-			removeSection( section );
-			
-			for (var i:int = 0; i < ballsLen; i++) {
-				updateBallSection( balls[ i ] );
-			}
-			
-		}
-		
-		/// SECTIONS
-		
-		private function createSection( left:Number, top:Number, right:Number, bottom:Number ):Section {
-			
-			var r:Section = new Section( left, top, right, bottom );
-			sections.push( r );
-			sectionsLen++;
-			layerSections.addChild( r.quad );
-			return r;
-			
-		}
-		
-		private function removeSection( section:Section ):void {
-			
-			sections.splice( sections.indexOf( section ), 1 );
-			section.quad.removeFromParent( true );
-			sectionsLen--;
-			
-		}
-		
 		/// BALLS
 		
 		private function addNewBall( x:Number, y:Number, direction:Number, speed:Number, color:uint, type:BallType ):Ball {
@@ -367,7 +300,6 @@ package game {
 			layerBalls.addChild( o );
 			balls.push( o );
 			ballsLen++;
-			updateBallSection( o );
 			o.position.setTo( x, y );
 			o.addEventListener( Event.REMOVED_FROM_STAGE, onBallDead );
 			return o;
@@ -415,26 +347,6 @@ package game {
 		private function exit():void 
 		{
 			destroy();
-		}
-		
-		private function updateBallSection( ball:Ball ):void {
-
-			for (var i:int = 0; i < sectionsLen; i++) {
-				if ( sections[ i ].contains( ball.x, ball.y ) ) {
-					ball.section = sections[ i ];
-					break;
-				}
-			}
-			
-		}
-		
-		///
-		
-		private function selectAction( a:UserAction ):void {
-			
-			selectedAction = a;
-			tAction.text = a.name;
-			
 		}
 		
 	}
