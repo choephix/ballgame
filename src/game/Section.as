@@ -18,7 +18,8 @@ package game {
 			
 			///THE DEBUG QUAD
 			//var clr:uint = Math.random() * 0xFFFFFF;
-			var clr:uint = 0xCCDDDD;
+			//var clr:uint = 0xCCDDDD;
+			var clr:uint = 0x222222;
 			quad = new Quad( width, height, clr );
 			quad.x = x;
 			quad.y = y;

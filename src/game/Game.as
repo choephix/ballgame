@@ -98,19 +98,41 @@ package game {
 				
 			markThings();
 			
-			//for ( var i:int = 0; i < 8; i++ ) 
-			//{
-				//spawnRegularEnemy();
-			//}
+			const INITIAL_ENEMY_POSITIONS:Array = [ 
+													.2, .2,
+													.8, .2,
+													.5, .1,
+													.2, .8,
+													.8, .8,
+													.5, .9,
+													.5, .5
+												  ];
 			
-			spawnRegularEnemy();
-			spawnRegularEnemy();
-			spawnRegularEnemy();
-			spawnRegularEnemy();
-			spawnRegularEnemy();
+			for ( var i:int = 0; i < 5; i++ ) 
+			{
+				addNewBall(
+					arenaBounds.x + INITIAL_ENEMY_POSITIONS[ 2*i + 0 ] * arenaBounds.width,
+					arenaBounds.y + INITIAL_ENEMY_POSITIONS[ 2*i + 1 ] * arenaBounds.height,
+					Math.random() * Math.PI * 2.0,
+					.44 * ( Math.random() + 1.0 ),
+					//0.0,
+					0xFF4444, BallType.ENEMY
+					);
+			}
+			
+			addNewBall(
+				INITIAL_ENEMY_POSITIONS[ 2*5 + 0 ] * arenaBounds.width,
+				INITIAL_ENEMY_POSITIONS[ 2*5 + 1 ] * arenaBounds.height,
+				Math.random() * Math.PI * 2.0,
+				2.0, 0xFF44FF, BallType.ENEMY
+				);
+			
 			//spawnRegularEnemy();
 			//spawnRegularEnemy();
-			spawnFastEnemy();
+			//spawnRegularEnemy();
+			//spawnRegularEnemy();
+			//spawnRegularEnemy();
+			//spawnFastEnemy();
 			
 			spawnTarget();
 		}
@@ -158,16 +180,16 @@ package game {
 			//HACK
 			if ( arenaBounds == null )
 				return;
-				
-			markThings();
 			
-			var p:Object = analizer.getPoint( .001 );
+			var p:GameArenaAnalizer_Point = analizer.getCenterishPoint( 0.0, -1.0, 0.0005 );
 				
 			addNewBall(
 				p.x, p.y,
 				Math.random() * Math.PI,
 				0.2, 0xFFEE88, BallType.TARGET
 				);
+				
+			markThings();
 			
 		}
 		
@@ -176,17 +198,18 @@ package game {
 			//HACK
 			if ( arenaBounds == null )
 				return null;
-				
-			markThings();
 			
-			var p:Object = analizer.getPoint( .001 );
+			var p:GameArenaAnalizer_Point = analizer.getCenterishPoint( -1.0, -1.0, 0.000125 );
 				
 			return addNewBall(
 				p.x, p.y,
 				Math.random() * Math.PI * 2.0,
-				.44 * ( Math.random() + 1.0 ),
+				//.44 * ( Math.random() + 1.0 ),
+				0.0,
 				0xFF4444, BallType.ENEMY
 				);
+				
+			markThings();
 		}
 		
 		private function spawnFastEnemy():Ball 
@@ -194,16 +217,16 @@ package game {
 			//HACK
 			if ( arenaBounds == null )
 				return null;
-				
-			markThings();
 			
-			var p:Object = analizer.getPoint( .001 );
+			var p:GameArenaAnalizer_Point = analizer.getCenterishPoint( -1.0, -1.0, 0.000125 );
 				
 			return addNewBall(
 				p.x, p.y,
 				Math.random() * Math.PI * 2.0,
 				2.0, 0xFF44FF, BallType.ENEMY
 				);
+				
+			markThings();
 		}
 		
 		///
@@ -262,6 +285,9 @@ package game {
 			const a:Array = [ UserAction.SPLIT_VERTICAL, UserAction.SPLIT_HORISONTAL, UserAction.ADD_BALL ];
 			
 			if ( e.keyCode == Keyboard.SPACE ) {
+				
+				spawnRegularEnemy();
+				return;
 				
 				if ( state == GameState.PAUSED || state == GameState.WAITING )
 				{
@@ -330,18 +356,6 @@ package game {
 		
 		/// BALLS
 		
-		private function addNewRandomBall():Ball {
-			
-			return addNewBall(
-				arenaBounds.x + arenaBounds.width * Math.random(),
-				arenaBounds.y + arenaBounds.height * Math.random(),
-				Math.random() * Math.PI,
-				.44 * ( Math.random() + 1.0 ),
-				0xFF4444, 
-				BallType.ENEMY
-				);
-		}
-		
 		private function addNewBall( x:Number, y:Number, direction:Number, speed:Number, color:uint, type:BallType ):Ball {
 			
 			var o:Ball = new Ball();
@@ -354,6 +368,7 @@ package game {
 			balls.push( o );
 			ballsLen++;
 			updateBallSection( o );
+			o.position.setTo( x, y );
 			o.addEventListener( Event.REMOVED_FROM_STAGE, onBallDead );
 			return o;
 		}

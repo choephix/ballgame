@@ -49,7 +49,8 @@ package game
 				o = dots[ i ];
 				//o.alpha = analizer.dots[ i ].edgeDist;
 				//o.alpha = analizer.dots[ i ].playerHeat;
-				o.alpha = analizer.dots[ i ].enemyHeat;
+				//o.alpha = analizer.dots[ i ].enemyHeat;
+				o.alpha = .05 + analizer.dots[ i ].temp;
 			}
 		}
 		

@@ -12,6 +12,7 @@ package game
 		public var dotsCount:int;
 		private var bounds:Rectangle;
 		private var _helperPoint:Point;
+		private var _helperDot:GameArenaAnalizer_Point;
 		
 		public function initialize( bounds:Rectangle, fidelityX:int=32, fidelityY:int=18 ):void
 		{
@@ -41,9 +42,61 @@ package game
 			_helperPoint = new Point();
 		}
 		
-		public function getPoint( ...rest ):GameArenaAnalizer_Point
+		public function getPointRandom():GameArenaAnalizer_Point
 		{
 			return dots[ int( dotsCount * Math.random() ) ];
+		}
+		
+		public function getCenterishPoint( enemyHeat:Number = 0.0, playerHeat:Number = 0.0, randomize:Number = 0.0 ):GameArenaAnalizer_Point
+		{
+			var currentPoint:GameArenaAnalizer_Point;
+			var currentScore:Number;
+			var bestPoint:GameArenaAnalizer_Point;
+			var bestScore:Number;
+			
+			var i:int;
+			var tempMin:Number = Number.MAX_VALUE;
+			var tempMax:Number = -Number.MAX_VALUE;
+			
+			for ( i = 0; i < dotsCount; i++ ) 
+			{
+				currentPoint = dots[ i ];
+				currentScore = currentPoint.edgeDist;
+				currentScore = 0.0;
+				
+				currentScore += enemyHeat * currentPoint.enemyHeat;
+				//currentScore += playerHeat * currentPoint.playerHeat;
+				//currentScore += randomize * Math.random();
+				currentScore += 0.01 * Math.random();
+				
+				if ( bestPoint == null || currentScore > bestScore )
+				{
+					bestPoint = currentPoint;
+					bestScore = currentScore;
+				}
+				
+				if ( currentScore > tempMax ) tempMax = currentScore;
+				if ( currentScore < tempMin ) tempMin = currentScore;
+				currentPoint.temp = currentScore;
+				
+				//trace( currentScore );
+			}
+			
+			//trace( "- - - - - - - - - - - - - -" );
+			
+			for ( i = 0; i < dotsCount; i++ ) 
+			{
+				currentPoint = dots[ i ];
+				currentPoint.temp = ( currentPoint.temp - tempMin ) / ( tempMax - tempMin );
+			}
+			
+			return bestPoint;
+		}
+		
+		public function getPointOppositeToPlayer():GameArenaAnalizer_Point
+		{
+			//_helperDot.x = bounds.width - player
+			return null;
 		}
 		
 		public function update( balls:Vector.<Ball> ):void 
@@ -66,12 +119,14 @@ package game
 					b = balls[ ib ];
 					if ( b.type == BallType.PLAYER )
 					{
-						dot.playerHeat += Math.pow( proximityManhattan( b, dot, 2560 ), 13.0 );
+						//dot.playerHeat += Math.pow( proximityManhattan( b, dot, 2560 ), 13.0 );
+						dot.playerHeat += Math.pow( proximityManhattan( b, dot, 600 ), 2.0 );
 					}
 					else
 					if ( b.type == BallType.ENEMY )
 					{
-						dot.enemyHeat += Math.pow( proximityManhattan( b, dot, 2560 ), 13.0 );
+						//dot.enemyHeat += Math.pow( proximityManhattan( b, dot, 2560 ), 13.0 );
+						dot.enemyHeat += Math.pow( proximityManhattan( b, dot, 100 ), 2.0 );
 					}
 				}
 			}

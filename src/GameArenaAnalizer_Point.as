@@ -8,9 +8,11 @@ package
 	{
 		public var x:Number;
 		public var y:Number;
-		public var edgeDist:Number;
-		public var enemyHeat:Number;
-		public var playerHeat:Number;
+		public var edgeDist:Number = 0.0;
+		public var enemyHeat:Number = 0.0;
+		public var playerHeat:Number = 0.0;
+		
+		public var temp:Number = 0.0;
 	}
 
 }
