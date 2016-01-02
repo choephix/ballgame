@@ -119,8 +119,8 @@ package game {
 		
 		public function checkForCollisionWithBall( subject:Ball ):void {
 			
-			//if ( subject.type == BallType.TARGET )
-				//return;
+			if ( type == BallType.PLAYER && subject.type == BallType.TARGET )
+				return;
 			
 			if ( radius * 2.0 > Point.distance( position, subject.position ) ) {
 				
@@ -187,6 +187,9 @@ package game {
 		
 		private function xplo( color:uint=0xFF1111, delay:Number=0.0 ):void
 		{
+			if ( !parent )
+				return;
+			
 			var o:Image;
 			o = new Image ( App.assets.getTexture( "o" ) );
 			o.alpha = 0.85;

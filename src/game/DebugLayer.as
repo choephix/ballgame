@@ -26,6 +26,8 @@ package game
 			for ( var i:int = 0; i < analizer.dots.length; i++ ) 
 			{
 				o = new Quad( 1, 1 );
+				o.color = 0x0;
+				o.color = 0xFFFFFF;
 				o.width = DOT_SIZE;
 				o.height = DOT_SIZE;
 				o.alignPivot();
