@@ -24,8 +24,6 @@ package game {
 		
 		private var area:GameArea;
 		private var rootSprite:DisplayObjectContainer;
-		private var balls:Vector.<Ball>;
-		private var ballsLen:int = 0;
 		
 		private var layerBackground:BackgroundLayer;
 		private var layerDebug:DebugLayer;
@@ -42,14 +40,12 @@ package game {
 		private var state:GameState = GameState.WAITING;
 		private var score:int = 0;
 		private var analizer:GameArenaAnalizer;
-		private var collisions:BallsManager;
+		private var balls:BallsManager;
 		///
 		
 		public function Game() {
 			
 			rootSprite = App.stage;
-			
-			balls = new Vector.<Ball>();
 			
 			layerBackground = new BackgroundLayer();
 			layerDebug = new DebugLayer();
@@ -71,7 +67,8 @@ package game {
 			analizer.initialize( area );
 			layerDebug.initialize( analizer );
 			
-			collisions = new BallsManager();
+			balls = new BallsManager();
+			balls.initialize( layerBalls, area );
 			
 			tAction = new TextField( 500, 50, "...", "Verdana", 32, 0x0 );
 			//tAction.vAlign = "top";
@@ -135,8 +132,7 @@ package game {
 			App.stage.removeEventListener( TouchEvent.TOUCH, onTouch );
 			App.stage.removeEventListener( KeyboardEvent.KEY_UP, onKeyUp );
 			
-			for ( var i:int = 0; i < ballsLen; i++)
-				balls[ i ].removeEventListener( Event.REMOVED_FROM_STAGE, onBallDead );
+			balls.purge();
 			
 			layerBackground.removeFromParent( true );
 			layerBackground = null;
@@ -148,9 +144,6 @@ package game {
 			layerUI = null;
 			rootSprite.removeFromParent( true );
 			rootSprite = null;
-			
-			balls.length = 0;
-			balls = null;
 			
 			tAction.removeFromParent( true );
 			tAction = null;
@@ -168,7 +161,7 @@ package game {
 			addNewBall(
 				p.x, p.y,
 				Math.random() * Math.PI,
-				0.2, 0xFFEE88, BallType.TARGET
+				0.05, 0xFFEE88, BallType.TARGET
 				);
 				
 			markThings();
@@ -215,7 +208,7 @@ package game {
 					return;
 				}
 				
-				collisions.advance( e.passedTime, balls, area );
+				balls.advance( e.passedTime );
 				markThings();
 			}
 		}
@@ -275,22 +268,15 @@ package game {
 		
 		private function markThings():void
 		{
-			analizer.update( balls );
+			analizer.update( balls.getAll() );
 			layerDebug.update();
 		}
 		
 		/// BALLS
 		
-		private function addNewBall( x:Number, y:Number, direction:Number, speed:Number, color:uint, type:BallType ):Ball {
-			
-			var o:Ball = new Ball( color );
-			o.type = type;
-			o.setPosition( x, y );
-			o.startMoving( direction, speed * 50 );
-			layerBalls.addChild( o.sprite );
-			balls.push( o );
-			ballsLen++;
-			o.position.setTo( x, y );
+		private function addNewBall( x:Number, y:Number, direction:Number, speed:Number, color:uint, type:BallType ):Ball
+		{
+			var o:Ball = balls.add( x, y, direction, speed, color, type );
 			o.addEventListener( BallEvent.DEAD, onBallDead );
 			return o;
 		}
@@ -300,8 +286,6 @@ package game {
 			var ball:Ball = e.currentTarget as Ball;
 			
 			ball.removeEventListener( BallEvent.DEAD, onBallDead);
-			
-			ballsLen--;
 			
 			if ( ball.type == BallType.TARGET )
 			{

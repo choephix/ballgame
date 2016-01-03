@@ -72,6 +72,7 @@ package game
 			sprite.removeChildren( 0, -1, true );
 			sprite.dispose();
 			sprite = null;
+			removeEventListeners();
 		}
 		
 		public function startMoving( angle:Number, speed:Number ):void
