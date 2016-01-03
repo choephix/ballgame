@@ -1,100 +1,112 @@
-package game {
+package game
+{
 	import flash.geom.Point;
-	import flash.geom.Rectangle;
 	import starling.core.Starling;
-	import starling.display.DisplayObject;
-	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
-	import starling.display.Quad;
+	import starling.display.Sprite;
+	import starling.events.EventDispatcher;
 	import starling.text.TextField;
 	import starling.utils.HAlign;
 	import starling.utils.VAlign;
 	
-	/**
-	 * ...
-	 * @author choephix
-	 */
-	public class Ball extends DisplayObjectContainer {
+	public class Ball extends EventDispatcher
+	{
 		
 		public static var BALL_DEATH:String;
-		
-		///
-		
 		private static var NEXT_UID:uint = 1;
 		private static const SPEED_MULTIPLIER:Number = 10;
+		
 		public var uid:uint = 0;
 		public var radius:Number;
 		public var position:Point;
-		public var force:Point;
+		private var force:Point;
 		public var type:BallType;
 		
-		private var shadow:Image;
-		private var img:Image;
-		private var blacklisted:Ball; // must be vector
+		public var sprite:Sprite;
+		private var imgShadow:Image;
+		private var imgBody:Image;
+		private var blacklisted:Ball;
 		
 		public var isDead:Boolean = false;
 		
-		public function Ball( radius:Number = 25.0 ) {
-			
+		public function Ball( color:uint, radius:Number = 24.0 )
+		{
 			this.radius = radius;
 			this.position = new Point();
 			this.force = new Point();
 			this.uid = NEXT_UID;
 			NEXT_UID++;
 			
-			shadow = new Image ( App.assets.getTexture( "o" ) );
-			shadow.width =
-			shadow.height = radius * 2.0;
-			shadow.alignPivot();
-			shadow.y = 2.0;
-			shadow.alpha = .40;
-			shadow.color = 0x0;
-			addChild( shadow );
+			sprite = new Sprite();
+			sprite.touchable = false;
 			
-			img = new Image ( App.assets.getTexture( "o" ) );
-			img.width =
-			img.height = radius * 2.0;
-			img.alignPivot();
-			addChild( img );
+			imgShadow = new Image ( App.assets.getTexture( "o" ) );
+			imgShadow.width =
+			imgShadow.height = radius * 2.0;
+			imgShadow.alignPivot();
+			imgShadow.y = 2.0;
+			imgShadow.alpha = .40;
+			imgShadow.color = 0x0;
+			sprite.addChild( imgShadow );
 			
-			touchable = false;
+			imgBody = new Image ( App.assets.getTexture( "o" ) );
+			imgBody.color = color;
+			imgBody.width =
+			imgBody.height = radius * 2.0;
+			imgBody.alignPivot();
+			sprite.addChild( imgBody );
 			
-			var t:TextField = new TextField( radius * 2.0, radius * 2.0, uid.toString() );
-			t.bold = true;
-			t.fontSize = 22.0;
-			t.color  = 0x7788aa;
-			t.color  = 0xAABBDD;
-			t.hAlign = HAlign.CENTER;
-			t.vAlign = VAlign.CENTER;
-			t.alignPivot();
+			//var t:TextField = new TextField( radius * 2.0, radius * 2.0, uid.toString() );
+			//t.bold = true;
+			//t.fontSize = 22.0;
+			//t.color  = 0x7788aa;
+			//t.color  = 0xAABBDD;
+			//t.hAlign = HAlign.CENTER;
+			//t.vAlign = VAlign.CENTER;
+			//t.alignPivot();
 			//addChild( t );
-			
 		}
 		
-		public function setForce( x:Number, y:Number ):void {
-			
-			force.x = x;
-			force.y = y;
-			
+		public function destroy():void
+		{
+			sprite.removeChildren( 0, -1, true );
+			sprite.dispose();
+			sprite = null;
 		}
 		
-		public function startMoving( angle:Number, speed:Number ):void {
-			
+		public function startMoving( angle:Number, speed:Number ):void
+		{
 			speed *= SPEED_MULTIPLIER;
 			setForce( Math.cos( angle ) * speed, -Math.sin( angle ) * speed );
-			
+		}
+		
+		public function setForce( x:Number, y:Number ):void
+		{
+			imgBody.rotation = Math.atan2( y, x );
+			force.x = x;
+			force.y = y;
+		}
+		
+		public function getForce():Point
+		{
+			return force;
 		}
 		
 		public function move( dx:Number, dy:Number ):void 
 		{
-			x += dx;
-			y += dy;
+			setPosition( position.x + dx, position.y + dy );
+		}
+		
+		public function setPosition( x:Number, y:Number ):void
+		{
 			position.setTo( x, y );
+			sprite.x = x;
+			sprite.y = y;
 		}
 		
 		
-		public function checkForCollisionWithBall( subject:Ball ):void {
-			
+		public function checkForCollisionWithBall( subject:Ball ):void
+		{
 			if ( type == BallType.PLAYER && subject.type == BallType.TARGET )
 				return;
 			
@@ -103,7 +115,7 @@ package game {
 				if ( blacklisted == subject )
 					return;
 				
-				var fi:Number = getAngle( position.x, position.y, subject.x, subject.y );
+				var fi:Number = getAngle( position.x, position.y, subject.position.x, subject.position.y );
 				var fa:Number = getAngle( force.x, force.y );
 				fa -= fi * 2.0;
 				
@@ -120,10 +132,8 @@ package game {
 			
 		}
 		
-		public function onBallCollision( other:Ball ):void {
-			
-			//trace( "BAM!", this, other );
-			
+		public function onBallCollision( other:Ball ):void
+		{
 			if ( type == BallType.PLAYER && other.type == BallType.ENEMY )
 			{
 				xplo( 0xFF1111, .000 );
@@ -149,22 +159,24 @@ package game {
 			}
 		}
 		
-		public function onEdgeCollision():void {
+		public function onEdgeCollision():void
+		{
 			xplo( 0xFF1111 );
 		}
 		
-		public function die():void {
+		public function die():void
+		{
 			isDead = true;
 			dispatchEvent( new BallEvent( BallEvent.DEAD ) );
 			blacklisted = null;
-			removeFromParent( true );
+			sprite.removeFromParent();
 		}
 		
 		//TODO onDestroyed()
 		
 		private function xplo( color:uint=0xFF1111, delay:Number=0.0 ):void
 		{
-			if ( !parent )
+			if ( !sprite.parent )
 				return;
 			
 			var o:Image;
@@ -177,32 +189,19 @@ package game {
 			
 			o.scaleX = 0.0;
 			o.scaleY = 0.0;
-			o.x = x;
-			o.y = y;
-			parent.addChild( o );
+			o.x = position.x;
+			o.y = position.y;
+			sprite.parent.addChild( o );
 			Starling.juggler.tween( o, .200, { 
 				delay : delay, alpha : 0.0, scaleX : 2.0, scaleY : 2.0, 
 				onComplete : o.removeFromParent, onCompleteArgs : [true] } );
 		}
 		
-		public function toString():String {
-			
-			return uid.toString();
-		}
+		public function toString():String
+		{ return "B#"+uid.toString(); }
 		
-		private function getAngle( x1:Number, y1:Number, x2:Number = 0.0, y2:Number = 0.0 ):Number{
-			var dx:Number = x2 - x1;
-			var dy:Number = y2 - y1;
-			return Math.atan2( dy, dx );
-		}
-		
-		public function get color():uint {
-			return img.color;
-		}
-		
-		public function set color( value:uint ):void {
-			img.color = value;
-		}
+		private function getAngle( x1:Number, y1:Number, x2:Number = 0.0, y2:Number = 0.0 ):Number
+		{ return Math.atan2( y2 - y1, x2 - x1 ); }
 		
 	}
 

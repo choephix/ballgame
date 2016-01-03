@@ -42,7 +42,7 @@ package game {
 		private var state:GameState = GameState.WAITING;
 		private var score:int = 0;
 		private var analizer:GameArenaAnalizer;
-		private var collisions:CollisionsOverlord;
+		private var collisions:BallsManager;
 		///
 		
 		public function Game() {
@@ -71,7 +71,7 @@ package game {
 			analizer.initialize( area );
 			layerDebug.initialize( analizer );
 			
-			collisions = new CollisionsOverlord();
+			collisions = new BallsManager();
 			
 			tAction = new TextField( 500, 50, "...", "Verdana", 32, 0x0 );
 			//tAction.vAlign = "top";
@@ -209,6 +209,12 @@ package game {
 		{
 			if ( state == GameState.ONGOING )
 			{
+				if ( playerBall.isDead )
+				{
+					end();
+					return;
+				}
+				
 				collisions.advance( e.passedTime, balls, area );
 				markThings();
 			}
@@ -223,8 +229,7 @@ package game {
 			t = e.getTouch( App.stage, TouchPhase.BEGAN );
 			if ( t != null )
 			{
-				playerBall.force.x *= 0.1;
-				playerBall.force.y *= 0.1;
+				playerBall.setForce( playerBall.getForce().x * 0.05, playerBall.getForce().y * 0.05 );
 				
 				if ( state == GameState.WAITING )
 					start();
@@ -234,8 +239,7 @@ package game {
 			if ( t != null )
 			{
 				t.getMovement( App.stage, helperPoint );
-				playerBall.force.x += helperPoint.x * SPD;
-				playerBall.force.y += helperPoint.y * SPD;
+				playerBall.setForce( playerBall.getForce().x + helperPoint.x * SPD, playerBall.getForce().y + helperPoint.y * SPD );
 			}
 			
 		}
@@ -279,13 +283,11 @@ package game {
 		
 		private function addNewBall( x:Number, y:Number, direction:Number, speed:Number, color:uint, type:BallType ):Ball {
 			
-			var o:Ball = new Ball();
-			o.color = color;
+			var o:Ball = new Ball( color );
 			o.type = type;
-			o.x = x;
-			o.y = y;
+			o.setPosition( x, y );
 			o.startMoving( direction, speed * 50 );
-			layerBalls.addChild( o );
+			layerBalls.addChild( o.sprite );
 			balls.push( o );
 			ballsLen++;
 			o.position.setTo( x, y );
@@ -299,12 +301,8 @@ package game {
 			
 			ball.removeEventListener( BallEvent.DEAD, onBallDead);
 			
-			balls.splice( balls.indexOf( ball ), 1 );
 			ballsLen--;
 			
-			if ( ball == playerBall )
-				end();
-			else
 			if ( ball.type == BallType.TARGET )
 			{
 				tAction.text = (++score).toString();
