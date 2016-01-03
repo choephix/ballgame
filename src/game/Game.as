@@ -301,7 +301,7 @@ package game {
 			balls.push( o );
 			ballsLen++;
 			o.position.setTo( x, y );
-			o.addEventListener( Event.REMOVED_FROM_STAGE, onBallDead );
+			o.addEventListener( BallEvent.DEAD, onBallDead );
 			return o;
 		}
 		
@@ -309,7 +309,7 @@ package game {
 		{
 			var ball:Ball = e.currentTarget as Ball;
 			
-			ball.removeEventListener(Event.REMOVED_FROM_STAGE, onBallDead);
+			ball.removeEventListener( BallEvent.DEAD, onBallDead);
 			
 			balls.splice( balls.indexOf( ball ), 1 );
 			ballsLen--;

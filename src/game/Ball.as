@@ -179,6 +179,7 @@ package game {
 		
 		public function die():void {
 			
+			dispatchEvent( new BallEvent( BallEvent.DEAD ) );
 			blacklisted = null;
 			removeFromParent( true );
 		}
