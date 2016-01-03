@@ -22,7 +22,7 @@ package game {
 		
 		public var onDestroyedCallback:Function;
 		
-		private var gameArea:GameArea;
+		private var area:GameArea;
 		private var rootSprite:DisplayObjectContainer;
 		private var balls:Vector.<Ball>;
 		private var ballsLen:int = 0;
@@ -42,7 +42,7 @@ package game {
 		private var state:GameState = GameState.WAITING;
 		private var score:int = 0;
 		private var analizer:GameArenaAnalizer;
-		
+		private var collisions:CollisionsOverlord;
 		///
 		
 		public function Game() {
@@ -63,16 +63,18 @@ package game {
 		
 		public function initialize():void {
 			
-			gameArea = new GameArea( App.stage.stageWidth, App.stage.stageHeight - 50 );
+			area = new GameArea( App.stage.stageWidth, App.stage.stageHeight - 50 );
 			layerDebug.y = 50;
 			layerBalls.y = 50;
 			
 			analizer = new GameArenaAnalizer();
-			analizer.initialize( gameArea );
+			analizer.initialize( area );
 			layerDebug.initialize( analizer );
 			
-			tAction = new TextField( 500, 100, "...", "Verdana", 32, 0xFFFFFF );
-			tAction.vAlign = "top";
+			collisions = new CollisionsOverlord();
+			
+			tAction = new TextField( 500, 50, "...", "Verdana", 32, 0x0 );
+			//tAction.vAlign = "top";
 			layerUI.addChild( tAction );
 			
 			App.stage.addEventListener( EnterFrameEvent.ENTER_FRAME, onEnterFrame );
@@ -84,7 +86,7 @@ package game {
 			//addNewBall( arenaBounds.width * 0.5, arenaBounds.height * 0.5, 0, 0 );
 			//return;
 			
-			playerBall = addNewBall( .5 * gameArea.width, .5 * gameArea.height, .0, .0, 0x22CCFF, BallType.PLAYER );
+			playerBall = addNewBall( .5 * area.width, .5 * area.height, .0, .0, 0x22CCFF, BallType.PLAYER );
 				
 			markThings();
 			
@@ -101,8 +103,8 @@ package game {
 			for ( var i:int = 0; i < 5; i++ ) 
 			{
 				addNewBall(
-					INITIAL_ENEMY_POSITIONS[ 2*i + 0 ] * gameArea.width,
-					INITIAL_ENEMY_POSITIONS[ 2*i + 1 ] * gameArea.height,
+					INITIAL_ENEMY_POSITIONS[ 2*i + 0 ] * area.width,
+					INITIAL_ENEMY_POSITIONS[ 2*i + 1 ] * area.height,
 					Math.random() * Math.PI * 2.0,
 					.44 * ( Math.random() + 1.0 ),
 					//0.0,
@@ -111,8 +113,8 @@ package game {
 			}
 			
 			addNewBall(
-				INITIAL_ENEMY_POSITIONS[ 2*5 + 0 ] * gameArea.width,
-				INITIAL_ENEMY_POSITIONS[ 2*5 + 1 ] * gameArea.height,
+				INITIAL_ENEMY_POSITIONS[ 2*5 + 0 ] * area.width,
+				INITIAL_ENEMY_POSITIONS[ 2*5 + 1 ] * area.height,
 				Math.random() * Math.PI * 2.0,
 				2.0, 0xFF44FF, BallType.ENEMY
 				);
@@ -207,21 +209,7 @@ package game {
 		{
 			if ( state == GameState.ONGOING )
 			{
-				var i:int;
-				var j:int;
-				for ( i = 0; i < ballsLen; i++) {
-					with ( balls[ i ] ) {
-						if ( stage == null ) 
-							continue;
-						loopUpdate( e.passedTime, gameArea );
-						for ( j = 0; j < ballsLen; j++) {
-							if ( i == j ) 
-								continue;
-							checkForCollisionWithBall( balls[ j ] );
-						}
-					}
-				}
-				
+				collisions.advance( e.passedTime, balls, area );
 				markThings();
 			}
 		}

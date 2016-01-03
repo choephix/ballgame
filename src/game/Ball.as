@@ -32,6 +32,8 @@ package game {
 		private var img:Image;
 		private var blacklisted:Ball; // must be vector
 		
+		public var isDead:Boolean = false;
+		
 		public function Ball( radius:Number = 25.0 ) {
 			
 			this.radius = radius;
@@ -83,39 +85,13 @@ package game {
 			
 		}
 		
-		public function loopUpdate( timeElapsed:Number, section:GameArea ):void {
-			
-			if ( section.width < radius * 2.0 || section.height < radius * 2.0 ) {
-				return;
-			}
-			
-			x += timeElapsed * force.x;
-			y += timeElapsed * force.y;
-			
-			if ( bounds.left <= section.left )  {
-				bounds.left = 2.0 * section.left - bounds.left;
-				force.x = Math.abs( force.x );
-				onEdgeCollision();
-			}  else
-			if ( bounds.right >= section.right )  {
-				bounds.right = 2.0 * section.right - bounds.right;
-				force.x = -Math.abs( force.x );
-				onEdgeCollision();
-			}
-			
-			if ( bounds.top <= section.top )  {
-				bounds.top = 2.0 * section.top - bounds.top;
-				force.y = Math.abs( force.y );
-				onEdgeCollision();
-			} else
-			if ( bounds.bottom >= section.bottom )  {
-				bounds.bottom = 2.0 * section.bottom - bounds.bottom;
-				force.y = -Math.abs( force.y );
-				onEdgeCollision();
-			}
-			
+		public function move( dx:Number, dy:Number ):void 
+		{
+			x += dx;
+			y += dy;
 			position.setTo( x, y );
 		}
+		
 		
 		public function checkForCollisionWithBall( subject:Ball ):void {
 			
@@ -144,7 +120,7 @@ package game {
 			
 		}
 		
-		private function onBallCollision( other:Ball ):void {
+		public function onBallCollision( other:Ball ):void {
 			
 			//trace( "BAM!", this, other );
 			
@@ -173,12 +149,12 @@ package game {
 			}
 		}
 		
-		private function onEdgeCollision():void {
+		public function onEdgeCollision():void {
 			xplo( 0xFF1111 );
 		}
 		
 		public function die():void {
-			
+			isDead = true;
 			dispatchEvent( new BallEvent( BallEvent.DEAD ) );
 			blacklisted = null;
 			removeFromParent( true );
