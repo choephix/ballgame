@@ -1,7 +1,11 @@
 package game 
 {
+	import flash.geom.Point;
+	import starling.core.Starling;
 	import starling.display.DisplayObjectContainer;
+	import starling.display.Quad;
 	import starling.events.Event;
+	import utils.Maath;
 	/**
 	 * ...
 	 * @author choephix
@@ -86,24 +90,120 @@ package game
 					b1.setForce( b1.getForce().x, -Math.abs( b1.getForce().y ) );
 					b1.onEdgeCollision();
 				}
+				
+				b1.__v.length = 0;
 			}
 			
-			for ( i = 0; i < vLen; i++) {
-				
-				b1 = v[ i ];
-				
-				for ( j = 0; j < vLen; j++) {
-					
-					if ( i == j ) 
-						continue;
-						
-					b1.checkForCollisionWithBall( v[ j ] );
-					
+			for ( i = 0; i < vLen; i++)
+			{
+				for ( j = i + 1; j < vLen; j++)
+				{
+					if ( checkForCollisionBetween( v[ i ], v[ j ] ) )
+					{
+						onBallsCollision( v[ j ], v[ i ] );
+						//onBallsCollision( v[ i ], v[ j ] );
+					}
 				}
-				
 			}
 			
 		}
+		
+		public function checkForCollisionBetween( b1:Ball, b2:Ball ):Boolean
+		{
+			if ( b1.x - b1.radius > b2.x + b2.radius )
+				return false;
+			
+			if ( b1.x + b1.radius < b2.x - b2.radius )
+				return false;
+			
+			if ( b1.y - b1.radius > b2.y + b2.radius )
+				return false;
+			
+			if ( b1.y + b1.radius < b2.y - b2.radius )
+				return false;
+			
+			return true
+			
+			if ( ( b1.radius + b2.radius ) * ( b1.radius + b2.radius ) < ( b2.x - b1.x ) * ( b2.x - b1.x ) + ( b2.y - b1.y ) * ( b2.y - b1.y ) )
+				return false;
+				
+			return true
+		}
+		
+		public function onBallsCollision( b1:Ball, b2:Ball ):void
+		{
+			//if ( b1.type == BallType.PLAYER && b2.type == BallType.TARGET )
+				//return;
+			
+			var radiusSum:Number = b1.radius + b2.radius;
+			var radiusRatio1:Number = b1.radius / radiusSum;
+			var radiusRatio2:Number = 1.0 - radiusRatio1;
+				
+			var midX:Number = Maath.lerp( b1.x, b2.x, radiusRatio1 );
+			var midY:Number = Maath.lerp( b1.y, b2.y, radiusRatio1 );
+
+			//var o:Quad = new Quad( 5, 5 );
+			//o.x = midX;
+			//o.y = midY;
+			//o.alignPivot();
+			//spritesContainer.addChild( o );
+			//Starling.juggler.delayCall( o.removeFromParent, .045, true );
+			
+			//var fi:Number;
+			//fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
+			//b1.setPosition( midX - 1.0 * Math.cos( fi ) * b1.radius, midY - 1.0 * Math.sin( fi ) * b1.radius );
+			//b2.setPosition( midX + 1.0 * Math.cos( fi ) * b2.radius, midY + 1.0 * Math.sin( fi ) * b2.radius );
+			//
+			//fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
+			//b1.startMoving( fi * 2.0 - getAngle( 0.0, 0.0, b1.getForce().x, b1.getForce().y ), b1.getForce().length / Ball.SPEED_MULTIPLIER );
+			//
+			//fi = getAngle( b2.position.x, b2.position.y, b1.position.x, b1.position.y );
+			//b2.startMoving( fi * 2.0 - getAngle( 0.0, 0.0, b2.getForce().x, b2.getForce().y ), b2.getForce().length / Ball.SPEED_MULTIPLIER );
+			
+			bounceBall( b1, b2 );
+			bounceBall( b2, b1 );
+			
+			//b1.onBallCollision( b2 );
+			//b2.onBallCollision( b1 );
+		}
+		
+		public function bounceBall( b1:Ball, b2:Ball ):void
+		{
+			var alpha:Number = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
+			var fi:Number = getAngle( 0.0, 0.0, b1.getForce().x, b1.getForce().y );
+			
+			//var o:Quad = new Quad( 5, 5 );
+			//o.x = b1.x + Math.cos( alpha ) * b1.radius;
+			//o.y = b1.y + Math.sin( alpha ) * b1.radius;
+			//o.alignPivot();
+			//spritesContainer.addChild( o );
+			//Starling.juggler.delayCall( o.removeFromParent, .045, true );
+			
+			var perp:Number = ( alpha > fi ? -1.0 : 1.0 ) * Math.PI;
+			
+			var fiPrime:Number = 2.0 * alpha + perp - fi;
+			
+			b1.startMoving( fiPrime, b1.getForce().length / Ball.SPEED_MULTIPLIER );
+			
+			//var fi:Number;
+			//fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
+			//b1.setPosition( midX - 1.0 * Math.cos( fi ) * b1.radius, midY - 1.0 * Math.sin( fi ) * b1.radius );
+			//b2.setPosition( midX + 1.0 * Math.cos( fi ) * b2.radius, midY + 1.0 * Math.sin( fi ) * b2.radius );
+			//
+			//fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
+			//b1.startMoving( fi * 2.0 - getAngle( 0.0, 0.0, b1.getForce().x, b1.getForce().y ), b1.getForce().length / Ball.SPEED_MULTIPLIER );
+			//
+			//fi = getAngle( b2.position.x, b2.position.y, b1.position.x, b1.position.y );
+			//b2.startMoving( fi * 2.0 - getAngle( 0.0, 0.0, b2.getForce().x, b2.getForce().y ), b2.getForce().length / Ball.SPEED_MULTIPLIER );
+			//
+			//b1.onBallCollision( b2 );
+			//b2.onBallCollision( b1 );
+		}
+		
+		private function getAngle( x1:Number, y1:Number, x2:Number, y2:Number ):Number
+		{ return Math.atan2( y2 - y1, x2 - x1 ); }
+		
+		///
 		
 		public function add( x:Number, y:Number, direction:Number, speed:Number, color:uint, type:BallType ):Ball
 		{

@@ -11,27 +11,33 @@ package game
 	
 	public class Ball extends EventDispatcher
 	{
-		
-		public static var BALL_DEATH:String;
 		private static var NEXT_UID:uint = 1;
-		private static const SPEED_MULTIPLIER:Number = 10;
+		public static const SPEED_MULTIPLIER:Number = 5;
 		
 		public var uid:uint = 0;
+		
 		public var radius:Number;
+		public var diameter:Number;
+		
 		public var position:Point;
-		private var force:Point;
+		public var force:Point;
 		public var type:BallType;
 		
 		public var sprite:Sprite;
 		private var imgShadow:Image;
 		private var imgBody:Image;
-		private var blacklisted:Ball;
+		
+		public var x:Number;
+		public var y:Number;
 		
 		public var isDead:Boolean = false;
+		
+		public var __v:Vector.<Ball> = new Vector.<Ball>();
 		
 		public function Ball( color:uint, radius:Number = 24.0 )
 		{
 			this.radius = radius;
+			this.diameter = radius * 2.0;
 			this.position = new Point();
 			this.force = new Point();
 			this.uid = NEXT_UID;
@@ -100,41 +106,18 @@ package game
 		
 		public function setPosition( x:Number, y:Number ):void
 		{
+			this.x = x;
+			this.y = y;
+			
 			position.setTo( x, y );
 			sprite.x = x;
 			sprite.y = y;
 		}
 		
-		
-		public function checkForCollisionWithBall( subject:Ball ):void
-		{
-			if ( type == BallType.PLAYER && subject.type == BallType.TARGET )
-				return;
-			
-			if ( radius * 2.0 > Point.distance( position, subject.position ) ) {
-				
-				if ( blacklisted == subject )
-					return;
-				
-				var fi:Number = getAngle( position.x, position.y, subject.position.x, subject.position.y );
-				var fa:Number = getAngle( force.x, force.y );
-				fa -= fi * 2.0;
-				
-				startMoving( fa, force.length / SPEED_MULTIPLIER );
-				
-				blacklisted = subject;
-				
-				onBallCollision( subject );
-				
-			} else {
-				if ( blacklisted == subject )
-					blacklisted = null;
-			}
-			
-		}
-		
 		public function onBallCollision( other:Ball ):void
 		{
+			return;
+			
 			if ( type == BallType.PLAYER && other.type == BallType.ENEMY )
 			{
 				xplo( 0xFF1111, .000 );
@@ -169,7 +152,6 @@ package game
 		{
 			isDead = true;
 			dispatchEvent( new BallEvent( BallEvent.DEAD ) );
-			blacklisted = null;
 			sprite.removeFromParent();
 		}
 		
@@ -200,9 +182,6 @@ package game
 		
 		public function toString():String
 		{ return "B#"+uid.toString(); }
-		
-		private function getAngle( x1:Number, y1:Number, x2:Number = 0.0, y2:Number = 0.0 ):Number
-		{ return Math.atan2( y2 - y1, x2 - x1 ); }
 		
 	}
 

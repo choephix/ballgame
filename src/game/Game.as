@@ -116,12 +116,17 @@ package game {
 				2.0, 0xFF44FF, BallType.ENEMY
 				);
 			
-			//spawnRegularEnemy();
-			//spawnRegularEnemy();
-			//spawnRegularEnemy();
-			//spawnRegularEnemy();
-			//spawnRegularEnemy();
-			//spawnFastEnemy();
+			for ( var i:int = 0; i < 6; i++ ) 
+			{
+				addNewBall(
+					Math.random() * area.width,
+					Math.random() * area.width,
+					Math.random() * Math.PI * 2.0,
+					.44 * ( Math.random() + 1.0 ),
+					//0.0,
+					0xFF6644, BallType.ENEMY
+					);
+			}
 			
 			spawnTarget();
 		}
