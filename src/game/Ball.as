@@ -19,6 +19,7 @@ package game
 		public var radius:Number;
 		public var diameter:Number;
 		
+		public var mass:Number = 1;
 		public var position:Point;
 		public var force:Point;
 		public var type:BallType;

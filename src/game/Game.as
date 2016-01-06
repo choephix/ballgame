@@ -20,6 +20,8 @@ package game {
 	 */
 	public class Game {
 		
+		public static var current:Game;
+		
 		public var onDestroyedCallback:Function;
 		
 		private var area:GameArea;
@@ -37,13 +39,15 @@ package game {
 		private var playerBall:Ball;
 		private static var helperPoint:Point = new Point();
 		
-		private var state:GameState = GameState.WAITING;
+		public var state:GameState = GameState.WAITING;
 		private var score:int = 0;
 		private var analizer:GameArenaAnalizer;
 		private var balls:BallsManager;
 		///
 		
 		public function Game() {
+			
+			current = this;
 			
 			rootSprite = App.stage;
 			
@@ -84,6 +88,16 @@ package game {
 			//return;
 			
 			playerBall = addNewBall( .5 * area.width, .5 * area.height, .0, .0, 0x22CCFF, BallType.PLAYER );
+			
+			
+				addNewBall(
+					.25 * area.width,
+					.25 * area.height,
+					Math.random() * Math.PI * 2.0,
+					.44 * ( Math.random() + 1.0 ),
+					//0.0,
+					0xFF4444, BallType.ENEMY
+					); return;
 				
 			markThings();
 			
@@ -231,6 +245,9 @@ package game {
 				
 				if ( state == GameState.WAITING )
 					start();
+				
+				if ( state == GameState.PAUSED )
+					state = GameState.ONGOING;
 			}
 			
 			t = e.getTouch( App.stage, TouchPhase.MOVED );

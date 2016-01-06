@@ -149,19 +149,14 @@ package game
 			//spritesContainer.addChild( o );
 			//Starling.juggler.delayCall( o.removeFromParent, .045, true );
 			
-			//var fi:Number;
-			//fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
-			//b1.setPosition( midX - 1.0 * Math.cos( fi ) * b1.radius, midY - 1.0 * Math.sin( fi ) * b1.radius );
-			//b2.setPosition( midX + 1.0 * Math.cos( fi ) * b2.radius, midY + 1.0 * Math.sin( fi ) * b2.radius );
-			//
-			//fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
-			//b1.startMoving( fi * 2.0 - getAngle( 0.0, 0.0, b1.getForce().x, b1.getForce().y ), b1.getForce().length / Ball.SPEED_MULTIPLIER );
-			//
-			//fi = getAngle( b2.position.x, b2.position.y, b1.position.x, b1.position.y );
-			//b2.startMoving( fi * 2.0 - getAngle( 0.0, 0.0, b2.getForce().x, b2.getForce().y ), b2.getForce().length / Ball.SPEED_MULTIPLIER );
-			
 			bounceBall( b1, b2 );
 			bounceBall( b2, b1 );
+			
+			const FIX:Number = 1.1;
+			var fi:Number;
+			fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
+			b1.setPosition( midX - FIX * Math.cos( fi ) * b1.radius, midY - FIX * Math.sin( fi ) * b1.radius );
+			b2.setPosition( midX + FIX * Math.cos( fi ) * b2.radius, midY + FIX * Math.sin( fi ) * b2.radius );
 			
 			//b1.onBallCollision( b2 );
 			//b2.onBallCollision( b1 );
@@ -169,40 +164,61 @@ package game
 		
 		public function bounceBall( b1:Ball, b2:Ball ):void
 		{
+			const R180:Number = Math.PI;
+			const R90:Number = R180 * .5;
+			
 			var alpha:Number = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
 			var fi:Number = getAngle( 0.0, 0.0, b1.getForce().x, b1.getForce().y );
 			
-			//var o:Quad = new Quad( 5, 5 );
-			//o.x = b1.x + Math.cos( alpha ) * b1.radius;
-			//o.y = b1.y + Math.sin( alpha ) * b1.radius;
-			//o.alignPivot();
-			//spritesContainer.addChild( o );
-			//Starling.juggler.delayCall( o.removeFromParent, .045, true );
+			var fiPrime:Number = alpha + Math.PI;
+			var epsilon:Number = NaN;
 			
-			var perp:Number = ( alpha > fi ? -1.0 : 1.0 ) * Math.PI;
+			var diff:Number = getAngleDiff( fi, alpha );
 			
-			var fiPrime:Number = 2.0 * alpha + perp - fi;
+			if ( diff < .0 && diff > -R90 )
+			{
+				epsilon = alpha + R90 - fi;
+				fiPrime = fi + 2.0 * epsilon;
+			}
+			else
+			if ( diff > .0 && diff < R90 )
+			{
+				epsilon = alpha - R90 + fi;
+				fiPrime = fi + 2.0 * epsilon;
+			}
 			
-			b1.startMoving( fiPrime, b1.getForce().length / Ball.SPEED_MULTIPLIER );
+			b1.startMoving( fiPrime, b1.force.length / Ball.SPEED_MULTIPLIER );
 			
-			//var fi:Number;
-			//fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
-			//b1.setPosition( midX - 1.0 * Math.cos( fi ) * b1.radius, midY - 1.0 * Math.sin( fi ) * b1.radius );
-			//b2.setPosition( midX + 1.0 * Math.cos( fi ) * b2.radius, midY + 1.0 * Math.sin( fi ) * b2.radius );
-			//
-			//fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
-			//b1.startMoving( fi * 2.0 - getAngle( 0.0, 0.0, b1.getForce().x, b1.getForce().y ), b1.getForce().length / Ball.SPEED_MULTIPLIER );
-			//
-			//fi = getAngle( b2.position.x, b2.position.y, b1.position.x, b1.position.y );
-			//b2.startMoving( fi * 2.0 - getAngle( 0.0, 0.0, b2.getForce().x, b2.getForce().y ), b2.getForce().length / Ball.SPEED_MULTIPLIER );
-			//
-			//b1.onBallCollision( b2 );
-			//b2.onBallCollision( b1 );
+			const TIME:Number = 5.0;
+			markBallAngle( b1, alpha, 0xFFFFFF, TIME );
+			markBallAngle( b1, fi, 0x0, TIME );
+			markBallAngle( b1, fiPrime, 0xFF8000, TIME );
+			//Game.current.state = GameState.PAUSED;
 		}
+		
+		private function markBallAngle( b:Ball, fi:Number, color:uint, time:Number = .033 ):void
+		{
+			var o:Quad = new Quad( 5, 5, color );
+			o.x = b.x + Math.cos( fi ) * b.radius;
+			o.y = b.y + Math.sin( fi ) * b.radius;
+			o.alignPivot();
+			spritesContainer.addChild( o );
+			Starling.juggler.delayCall( o.removeFromParent, time, true );
+		}
+		
+		private function getDotProduct( x1:Number, y1:Number, x2:Number, y2:Number ):Number
+		{ return x1 * x2 + y1 * y2 }
 		
 		private function getAngle( x1:Number, y1:Number, x2:Number, y2:Number ):Number
 		{ return Math.atan2( y2 - y1, x2 - x1 ); }
 		
+		private function getAngleDiff( a:Number, b:Number ):Number
+		{ 
+			var r:Number = a - b; 
+			while (r < -Math.PI) r += 2*Math.PI;
+			while (r > Math.PI) r -= 2*Math.PI;
+			return r;
+		}
 		///
 		
 		public function add( x:Number, y:Number, direction:Number, speed:Number, color:uint, type:BallType ):Ball
