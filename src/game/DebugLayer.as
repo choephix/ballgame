@@ -64,6 +64,22 @@ package game
 			}
 		}
 		
+		public function mark( x:Number, y:Number, color:uint, time:Number = NaN ):void
+		{
+			//var o:Quad = new Quad( 4, 4, color );
+			var o:Quad = new Image ( App.assets.getTexture( "o" ) );
+			o.width  = 6.0;
+			o.height = 6.0;
+			o.color = color;
+			o.x = x;
+			o.y = y;
+			o.alignPivot();
+			temp.addChild( o );
+			
+			if ( !isNaN( time ) )
+				Starling.juggler.delayCall( o.removeFromParent, time, true );
+		}
+		
 		public function markBallAngle( b:Ball, fi:Number, color:uint, time:Number = NaN ):void
 		{
 			//var o:Quad = new Quad( 4, 4, color );

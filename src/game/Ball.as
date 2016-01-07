@@ -12,7 +12,7 @@ package game
 	public class Ball extends EventDispatcher
 	{
 		private static var NEXT_UID:uint = 1;
-		public static const SPEED_MULTIPLIER:Number = 2;
+		public static const SPEED_MULTIPLIER:Number = 20;
 		
 		public var uid:uint = 0;
 		

@@ -101,7 +101,7 @@ package game
 				{
 					if ( checkForCollisionBetween( v[ i ], v[ j ] ) )
 					{
-						onBallsCollision( v[ j ], v[ i ] );
+						onCollisionBetween( v[ j ], v[ i ] );
 						//onBallsCollision( v[ i ], v[ j ] );
 					}
 				}
@@ -111,8 +111,8 @@ package game
 		
 		public function checkForCollisionBetween( b1:Ball, b2:Ball ):Boolean
 		{
-			if ( getTimer() - b1.__lastCollision < 70 || getTimer() - b2.__lastCollision < 70 )
-				return false;
+			//if ( getTimer() - b1.__lastCollision < 70 || getTimer() - b2.__lastCollision < 70 )
+				//return false;
 				
 			///
 			
@@ -136,22 +136,20 @@ package game
 			return true
 		}
 		
-		public function onBallsCollision( b1:Ball, b2:Ball ):void
+		public function onCollisionBetween( b1:Ball, b2:Ball ):void
 		{
 			Game.current.layerDebug.clearTemp();
 			
 			//if ( b1.type == BallType.PLAYER && b2.type == BallType.TARGET )
 				//return;
 			
-			//const FIX:Number = 1.0025;
-			//var radiusSum:Number = b1.radius + b2.radius;
-			//var midX:Number = Maath.lerp( b1.x, b2.x, b1.radius / radiusSum );
-			//var midY:Number = Maath.lerp( b1.y, b2.y, b1.radius / radiusSum );
-			//var fi:Number;
-			//fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
-			//b1.setPosition( midX - FIX * Math.cos( fi ) * b1.radius, midY - FIX * Math.sin( fi ) * b1.radius );
-			//b2.setPosition( midX + FIX * Math.cos( fi ) * b2.radius, midY + FIX * Math.sin( fi ) * b2.radius );
-
+			if ( App.isDownCtrl && ( b1.type == BallType.PLAYER || b2.type == BallType.PLAYER ) )
+			{
+				Game.current.layerDebug.mark( b1.x, b1.y, 0x00FFFF );
+				Game.current.layerDebug.mark( b2.x, b2.y, 0x00FFFF );
+				Game.current.state = GameState.PAUSED;
+			}
+			
 			bounceBall( b1, b2 );
 			bounceBall( b2, b1 );
 			
@@ -197,13 +195,14 @@ package game
 			b1.setForce( fX, fY );
 			//b1.startMoving( fiPrime, b1.force.length / Ball.SPEED_MULTIPLIER );
 			
-			const TIME:Number = NaN;
-			Game.current.layerDebug.markBallAngle( b1, alpha, 0xFFFFFF, TIME );
-			Game.current.layerDebug.markBallAngle( b1, fi, 0x0, TIME );
-			Game.current.layerDebug.markBallAngle( b1, fiPrime, 0xFF8000, TIME );
-			
 			if ( App.isDownShift && b1.type == BallType.PLAYER )
+			{
+				const TIME:Number = NaN;
+				Game.current.layerDebug.markBallAngle( b1, alpha, 0xFFFFFF, TIME );
+				Game.current.layerDebug.markBallAngle( b1, fi, 0x0, TIME );
+				Game.current.layerDebug.markBallAngle( b1, fiPrime, 0xFF8000, TIME );
 				Game.current.state = GameState.PAUSED;
+			}
 		}
 		
 		private function getDotProduct( x1:Number, y1:Number, x2:Number, y2:Number ):Number

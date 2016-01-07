@@ -119,19 +119,19 @@ package game {
 					Math.random() * Math.PI * 2.0,
 					.44 * ( Math.random() + 1.0 ),
 					//0.0,
-					0xFF4444, BallType.ENEMY
+					0x0, BallType.ENEMY
 					);
 			}
+			//
+			//addNewBall(
+				//INITIAL_ENEMY_POSITIONS[ 2*5 + 0 ] * area.width,
+				//INITIAL_ENEMY_POSITIONS[ 2*5 + 1 ] * area.height,
+				//Math.random() * Math.PI * 2.0,
+				//2.0, 0xFF44FF, BallType.ENEMY
+				//);
 			
-			addNewBall(
-				INITIAL_ENEMY_POSITIONS[ 2*5 + 0 ] * area.width,
-				INITIAL_ENEMY_POSITIONS[ 2*5 + 1 ] * area.height,
-				Math.random() * Math.PI * 2.0,
-				2.0, 0xFF44FF, BallType.ENEMY
-				);
-			
-			for ( var i:int = 0; i < 6; i++ ) 
-				addNewBall( Math.random() * area.width, Math.random() * area.width, Math.random() * Math.PI * 2.0, .44 * ( Math.random() + 1.0 ), 0xFF6644, BallType.ENEMY );
+			//for ( var i:int = 0; i < 6; i++ ) 
+				//addNewBall( Math.random() * area.width, Math.random() * area.width, Math.random() * Math.PI * 2.0, .44 * ( Math.random() + 1.0 ), 0xFF6644, BallType.ENEMY );
 			
 			spawnTarget();
 		}
