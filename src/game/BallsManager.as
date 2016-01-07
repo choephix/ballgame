@@ -1,6 +1,7 @@
 package game 
 {
 	import flash.geom.Point;
+	import flash.utils.getTimer;
 	import starling.core.Starling;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Quad;
@@ -110,6 +111,11 @@ package game
 		
 		public function checkForCollisionBetween( b1:Ball, b2:Ball ):Boolean
 		{
+			if ( getTimer() - b1.__lastCollision < 70 || getTimer() - b2.__lastCollision < 70 )
+				return false;
+				
+			///
+			
 			if ( b1.x - b1.radius > b2.x + b2.radius )
 				return false;
 			
@@ -132,31 +138,22 @@ package game
 		
 		public function onBallsCollision( b1:Ball, b2:Ball ):void
 		{
+			Game.current.layerDebug.clearTemp();
+			
 			//if ( b1.type == BallType.PLAYER && b2.type == BallType.TARGET )
 				//return;
 			
-			var radiusSum:Number = b1.radius + b2.radius;
-			var radiusRatio1:Number = b1.radius / radiusSum;
-			var radiusRatio2:Number = 1.0 - radiusRatio1;
-				
-			var midX:Number = Maath.lerp( b1.x, b2.x, radiusRatio1 );
-			var midY:Number = Maath.lerp( b1.y, b2.y, radiusRatio1 );
+			//const FIX:Number = 1.0025;
+			//var radiusSum:Number = b1.radius + b2.radius;
+			//var midX:Number = Maath.lerp( b1.x, b2.x, b1.radius / radiusSum );
+			//var midY:Number = Maath.lerp( b1.y, b2.y, b1.radius / radiusSum );
+			//var fi:Number;
+			//fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
+			//b1.setPosition( midX - FIX * Math.cos( fi ) * b1.radius, midY - FIX * Math.sin( fi ) * b1.radius );
+			//b2.setPosition( midX + FIX * Math.cos( fi ) * b2.radius, midY + FIX * Math.sin( fi ) * b2.radius );
 
-			//var o:Quad = new Quad( 5, 5 );
-			//o.x = midX;
-			//o.y = midY;
-			//o.alignPivot();
-			//spritesContainer.addChild( o );
-			//Starling.juggler.delayCall( o.removeFromParent, .045, true );
-			
 			bounceBall( b1, b2 );
 			bounceBall( b2, b1 );
-			
-			const FIX:Number = 1.1;
-			var fi:Number;
-			fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
-			b1.setPosition( midX - FIX * Math.cos( fi ) * b1.radius, midY - FIX * Math.sin( fi ) * b1.radius );
-			b2.setPosition( midX + FIX * Math.cos( fi ) * b2.radius, midY + FIX * Math.sin( fi ) * b2.radius );
 			
 			//b1.onBallCollision( b2 );
 			//b2.onBallCollision( b1 );
@@ -164,46 +161,49 @@ package game
 		
 		public function bounceBall( b1:Ball, b2:Ball ):void
 		{
+			b1.__lastCollision = getTimer();
+			
 			const R180:Number = Math.PI;
 			const R90:Number = R180 * .5;
 			
 			var alpha:Number = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
 			var fi:Number = getAngle( 0.0, 0.0, b1.getForce().x, b1.getForce().y );
 			
-			var fiPrime:Number = alpha + Math.PI;
+			var fiPrime:Number = Math.PI + alpha;
 			var epsilon:Number = NaN;
 			
 			var diff:Number = getAngleDiff( fi, alpha );
 			
 			if ( diff < .0 && diff > -R90 )
 			{
-				epsilon = alpha + R90 - fi;
-				fiPrime = fi + 2.0 * epsilon;
+				//epsilon = alpha + R90 - fi;
+				fiPrime = 2.0 * alpha + R180 - fi;
+				//fiPrime = -fiPrime;
 			}
 			else
 			if ( diff > .0 && diff < R90 )
 			{
-				epsilon = alpha - R90 + fi;
-				fiPrime = fi + 2.0 * epsilon;
+				//epsilon = alpha - R90 + fi;
+				fiPrime = 2.0 * alpha - R180 - fi;
+				//fiPrime = -fiPrime;
 			}
+			//else 
+				//return;
 			
-			b1.startMoving( fiPrime, b1.force.length / Ball.SPEED_MULTIPLIER );
+			var fLen:Number = b1.force.length ;
+			var fX:Number = Math.cos( fiPrime ) * fLen;
+			var fY:Number = Math.sin( fiPrime ) * fLen;
 			
-			const TIME:Number = 5.0;
-			markBallAngle( b1, alpha, 0xFFFFFF, TIME );
-			markBallAngle( b1, fi, 0x0, TIME );
-			markBallAngle( b1, fiPrime, 0xFF8000, TIME );
-			//Game.current.state = GameState.PAUSED;
-		}
-		
-		private function markBallAngle( b:Ball, fi:Number, color:uint, time:Number = .033 ):void
-		{
-			var o:Quad = new Quad( 5, 5, color );
-			o.x = b.x + Math.cos( fi ) * b.radius;
-			o.y = b.y + Math.sin( fi ) * b.radius;
-			o.alignPivot();
-			spritesContainer.addChild( o );
-			Starling.juggler.delayCall( o.removeFromParent, time, true );
+			b1.setForce( fX, fY );
+			//b1.startMoving( fiPrime, b1.force.length / Ball.SPEED_MULTIPLIER );
+			
+			const TIME:Number = NaN;
+			Game.current.layerDebug.markBallAngle( b1, alpha, 0xFFFFFF, TIME );
+			Game.current.layerDebug.markBallAngle( b1, fi, 0x0, TIME );
+			Game.current.layerDebug.markBallAngle( b1, fiPrime, 0xFF8000, TIME );
+			
+			if ( App.isDownShift && b1.type == BallType.PLAYER )
+				Game.current.state = GameState.PAUSED;
 		}
 		
 		private function getDotProduct( x1:Number, y1:Number, x2:Number, y2:Number ):Number

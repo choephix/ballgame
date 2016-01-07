@@ -28,7 +28,7 @@ package game {
 		private var rootSprite:DisplayObjectContainer;
 		
 		private var layerBackground:BackgroundLayer;
-		private var layerDebug:DebugLayer;
+		public var layerDebug:DebugLayer;
 		private var layerBalls:DisplayObjectContainer;
 		private var layerUI:DisplayObjectContainer;
 		
@@ -56,8 +56,8 @@ package game {
 			layerBalls = new Sprite();
 			layerUI = new Sprite();
 			rootSprite.addChild( layerBackground );
-			rootSprite.addChild( layerDebug );
 			rootSprite.addChild( layerBalls );
+			rootSprite.addChild( layerDebug );
 			rootSprite.addChild( layerUI );
 		}
 		
@@ -89,15 +89,15 @@ package game {
 			
 			playerBall = addNewBall( .5 * area.width, .5 * area.height, .0, .0, 0x22CCFF, BallType.PLAYER );
 			
-			
-				addNewBall(
-					.25 * area.width,
-					.25 * area.height,
-					Math.random() * Math.PI * 2.0,
-					.44 * ( Math.random() + 1.0 ),
-					//0.0,
-					0xFF4444, BallType.ENEMY
-					); return;
+			//
+				//addNewBall(
+					//.25 * area.width,
+					//.25 * area.height,
+					//Math.random() * Math.PI * 2.0,
+					//.44 * ( Math.random() + 1.0 ),
+					////0.0,
+					//0xFF4444, BallType.ENEMY
+					//); return;
 				
 			markThings();
 			
@@ -131,16 +131,7 @@ package game {
 				);
 			
 			for ( var i:int = 0; i < 6; i++ ) 
-			{
-				addNewBall(
-					Math.random() * area.width,
-					Math.random() * area.width,
-					Math.random() * Math.PI * 2.0,
-					.44 * ( Math.random() + 1.0 ),
-					//0.0,
-					0xFF6644, BallType.ENEMY
-					);
-			}
+				addNewBall( Math.random() * area.width, Math.random() * area.width, Math.random() * Math.PI * 2.0, .44 * ( Math.random() + 1.0 ), 0xFF6644, BallType.ENEMY );
 			
 			spawnTarget();
 		}
@@ -247,7 +238,10 @@ package game {
 					start();
 				
 				if ( state == GameState.PAUSED )
+				{
 					state = GameState.ONGOING;
+					playerBall.setPosition( t.getLocation( layerBalls ).x, t.getLocation( layerBalls ).y );
+				}
 			}
 			
 			t = e.getTouch( App.stage, TouchPhase.MOVED );
@@ -265,8 +259,8 @@ package game {
 			
 			if ( e.keyCode == Keyboard.SPACE ) {
 				
-				spawnRegularEnemy();
-				return;
+				//spawnRegularEnemy();
+				//return;
 				
 				if ( state == GameState.PAUSED || state == GameState.WAITING )
 				{

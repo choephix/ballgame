@@ -35,6 +35,7 @@ package {
 			App.assets.enqueue( "assets/o.png" );
 			App.assets.loadQueue( onAssetsLoadingProgress );
 			
+			App.initialize();
 		}
 		
 		private function onAssetsLoadingProgress( ratio:Number ):void {
@@ -49,8 +50,6 @@ package {
 		
 		private function onAssetsLoaded():void 
 		{
-			
-			
 			startGame();
 		}
 		
