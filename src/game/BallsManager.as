@@ -140,7 +140,7 @@ package game
 		{
 			Game.current.layerDebug.clearTemp();
 			
-			if ( !( b1.type == BallType.PLAYER && b2.type == BallType.TARGET ) && !( b2.type == BallType.PLAYER && b1.type == BallType.TARGET ) )
+			if ( b1.isCorporeal && b2.isCorporeal )
 			{
 				if ( App.isDownCtrl && ( b1.type == BallType.PLAYER || b2.type == BallType.PLAYER ) )
 				{
@@ -224,6 +224,7 @@ package game
 		{
 			var o:Ball = new Ball( color );
 			o.type = type;
+			o.initialize();
 			o.setPosition( x, y );
 			o.startMoving( direction, speed * 50 );
 			spritesContainer.addChild( o.sprite );
