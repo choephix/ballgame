@@ -12,7 +12,7 @@ package game
 	public class Ball extends EventDispatcher
 	{
 		private static var NEXT_UID:uint = 1;
-		public static const SPEED_MULTIPLIER:Number = 20;
+		public static const SPEED_MULTIPLIER:Number = 8;
 		
 		public var uid:uint = 0;
 		
@@ -25,7 +25,6 @@ package game
 		public var type:BallType;
 		
 		public var sprite:Sprite;
-		private var imgShadow:Image;
 		private var imgBody:Image;
 		
 		public var x:Number;
@@ -35,6 +34,8 @@ package game
 		
 		public var __lastCollision:Number = 0.0;
 		public var __v:Vector.<Ball> = new Vector.<Ball>();
+		
+		public var isCorporeal:Boolean;
 		
 		public function Ball( color:uint, radius:Number = 24.0 )
 		{
@@ -48,19 +49,11 @@ package game
 			sprite = new Sprite();
 			sprite.touchable = false;
 			
-			imgShadow = new Image ( App.assets.getTexture( "o" ) );
-			imgShadow.width =
-			imgShadow.height = radius * 2.0;
-			imgShadow.alignPivot();
-			imgShadow.y = 2.0;
-			imgShadow.alpha = .40;
-			imgShadow.color = 0x0;
-			sprite.addChild( imgShadow );
-			
 			imgBody = new Image ( App.assets.getTexture( "o" ) );
+			imgBody.blendMode = "add";
 			imgBody.color = color;
 			imgBody.width =
-			imgBody.height = radius * 2.0;
+			imgBody.height = radius * 4.0;
 			imgBody.alignPivot();
 			sprite.addChild( imgBody );
 			
@@ -75,11 +68,42 @@ package game
 			//addChild( t );
 		}
 		
+		public function initialize():void 
+		{
+			if ( type == BallType.TARGET )
+			{
+				var glow:Image;
+				
+				glow = new Image ( App.assets.getTexture( "rays-large-dark" ) );
+				glow.alignPivot();
+				glow.alpha = 1.00;
+				glow.blendMode = "add";
+				glow.color = 0xFFBB11;
+				sprite.addChild( glow );
+				Starling.juggler.tween( glow, 22.0, { rotation : Math.PI * 2.0, repeatCount : 0 } );
+				
+				glow = new Image ( App.assets.getTexture( "rays-large-dark" ) );
+				glow.alignPivot();
+				glow.alpha = 1.00;
+				glow.blendMode = "add";
+				glow.color = 0xFFBB11;
+				sprite.addChild( glow );
+				Starling.juggler.tween( glow, 32.0, { rotation : -Math.PI * 2.0, repeatCount : 0 } );
+				glow.scaleX *= -1.0;
+				
+				imgBody.scaleX *= .1;
+				imgBody.scaleY *= .1;
+			}
+			
+			isCorporeal = type != BallType.TARGET;
+		}
+		
 		public function destroy():void
 		{
 			sprite.removeChildren( 0, -1, true );
 			sprite.dispose();
 			sprite = null;
+			imgBody = null;
 			removeEventListeners();
 		}
 		
@@ -131,18 +155,18 @@ package game
 			
 			else
 			
-			if ( type == BallType.TARGET && other.type == BallType.PLAYER )
+			if ( type == BallType.ENEMY && other.type == BallType.ENEMY )
 			{
-				xplo( 0xFFFFFF );
-				die();
+				xplo( 0xFF1111 );
 			}
 			
 			else
 			
-			if ( type == BallType.ENEMY )
+			if ( type == BallType.TARGET && other.type == BallType.PLAYER )
 			{
-				xplo( 0xFF1111 );
+				die();
 			}
+			
 		}
 		
 		public function onEdgeCollision():void
@@ -166,6 +190,7 @@ package game
 			
 			var o:Image;
 			o = new Image ( App.assets.getTexture( "o" ) );
+			o.blendMode = "add";
 			o.alpha = 0.85;
 			o.color = color;
 			o.width =

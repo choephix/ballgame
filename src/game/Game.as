@@ -75,7 +75,6 @@ package game {
 			balls.initialize( layerBalls, area );
 			
 			tAction = new TextField( 500, 50, "...", "Verdana", 32, 0x0 );
-			//tAction.vAlign = "top";
 			layerUI.addChild( tAction );
 			
 			App.stage.addEventListener( EnterFrameEvent.ENTER_FRAME, onEnterFrame );
@@ -87,7 +86,7 @@ package game {
 			//addNewBall( arenaBounds.width * 0.5, arenaBounds.height * 0.5, 0, 0 );
 			//return;
 			
-			playerBall = addNewBall( .5 * area.width, .5 * area.height, .0, .0, 0x22CCFF, BallType.PLAYER );
+			playerBall = addNewBall( .5 * area.width, .5 * area.height, .0, .0, 0xAADDFF, BallType.PLAYER );
 			
 			//
 				//addNewBall(
@@ -118,17 +117,16 @@ package game {
 					INITIAL_ENEMY_POSITIONS[ 2*i + 1 ] * area.height,
 					Math.random() * Math.PI * 2.0,
 					.44 * ( Math.random() + 1.0 ),
-					//0.0,
-					0x0, BallType.ENEMY
+					0xFF3322, BallType.ENEMY
 					);
 			}
-			//
-			//addNewBall(
-				//INITIAL_ENEMY_POSITIONS[ 2*5 + 0 ] * area.width,
-				//INITIAL_ENEMY_POSITIONS[ 2*5 + 1 ] * area.height,
-				//Math.random() * Math.PI * 2.0,
-				//2.0, 0xFF44FF, BallType.ENEMY
-				//);
+			
+			addNewBall(
+				INITIAL_ENEMY_POSITIONS[ 2*5 + 0 ] * area.width,
+				INITIAL_ENEMY_POSITIONS[ 2*5 + 1 ] * area.height,
+				Math.random() * Math.PI * 2.0,
+				2.0, 0xFF44FF, BallType.ENEMY
+				);
 			
 			//for ( var i:int = 0; i < 6; i++ ) 
 				//addNewBall( Math.random() * area.width, Math.random() * area.width, Math.random() * Math.PI * 2.0, .44 * ( Math.random() + 1.0 ), 0xFF6644, BallType.ENEMY );

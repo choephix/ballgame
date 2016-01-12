@@ -13,7 +13,7 @@ package game
 		public function BackgroundLayer() 
 		{
 			super();
-			addChild( new Quad( App.stage.stageWidth, App.stage.stageHeight, 0x404040 ) );
+			addChild( new Quad( App.stage.stageWidth, App.stage.stageHeight, 0x202429 ) );
 			addChild( new Quad( App.stage.stageWidth, 50, 0xEEEEEE ) );
 		}
 		

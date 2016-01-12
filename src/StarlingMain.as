@@ -33,6 +33,7 @@ package {
 			App.stage = stage;
 			App.assets = new AssetManager();
 			App.assets.enqueue( "assets/o.png" );
+			App.assets.enqueue( "assets/rays-large-dark.png" );
 			App.assets.enqueue( "assets/score-up-glow.png" );
 			App.assets.loadQueue( onAssetsLoadingProgress );
 			
