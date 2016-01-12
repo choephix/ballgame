@@ -305,6 +305,7 @@ package game {
 			
 			if ( ball.type == BallType.TARGET )
 			{
+				playerBall.anim_OnGetTarget();
 				tAction.text = (++score).toString();
 				spawnTarget();
 			}

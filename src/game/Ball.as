@@ -185,6 +185,25 @@ package game
 		public function toString():String
 		{ return "B#"+uid.toString(); }
 		
+		public function anim_OnGetTarget():void 
+		{
+			if ( !sprite.parent )
+				return;
+			
+			var o:Image;
+			o = new Image ( App.assets.getTexture( "score-up-glow" ) );
+			o.width =
+			o.height = radius * 6.0;
+			o.alignPivot();
+			o.blendMode = "add";
+			
+			sprite.addChild( o );
+			Starling.juggler.tween( o, .440, { 
+				alpha : 0.0,
+				onComplete : o.removeFromParent, 
+				onCompleteArgs : [true] } );
+		}
+		
 	}
 
 }

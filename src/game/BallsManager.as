@@ -140,21 +140,21 @@ package game
 		{
 			Game.current.layerDebug.clearTemp();
 			
-			//if ( b1.type == BallType.PLAYER && b2.type == BallType.TARGET )
-				//return;
-			
-			if ( App.isDownCtrl && ( b1.type == BallType.PLAYER || b2.type == BallType.PLAYER ) )
+			if ( !( b1.type == BallType.PLAYER && b2.type == BallType.TARGET ) && !( b2.type == BallType.PLAYER && b1.type == BallType.TARGET ) )
 			{
-				Game.current.layerDebug.mark( b1.x, b1.y, 0x00FFFF );
-				Game.current.layerDebug.mark( b2.x, b2.y, 0x00FFFF );
-				Game.current.state = GameState.PAUSED;
+				if ( App.isDownCtrl && ( b1.type == BallType.PLAYER || b2.type == BallType.PLAYER ) )
+				{
+					Game.current.layerDebug.mark( b1.x, b1.y, 0x00FFFF );
+					Game.current.layerDebug.mark( b2.x, b2.y, 0x00FFFF );
+					Game.current.state = GameState.PAUSED;
+				}
+				
+				bounceBall( b1, b2 );
+				bounceBall( b2, b1 );
 			}
 			
-			bounceBall( b1, b2 );
-			bounceBall( b2, b1 );
-			
-			//b1.onBallCollision( b2 );
-			//b2.onBallCollision( b1 );
+			b1.onBallCollision( b2 );
+			b2.onBallCollision( b1 );
 		}
 		
 		public function bounceBall( b1:Ball, b2:Ball ):void
