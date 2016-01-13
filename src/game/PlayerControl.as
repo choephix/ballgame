@@ -9,7 +9,7 @@ package game
 	{
 		public var history:Vector.<Point>;
 		
-		static public const MAX_LEN:int = 4;
+		static public const MAX_LEN:int = 24;
 		
 		private var __p:Point;
 		
@@ -47,14 +47,18 @@ package game
 				__p.y += item.y * MUL;
 			}
 			
-			__p.x = processTotalDimension( __p.x );
-			__p.y = processTotalDimension( __p.y );
+			//__p.x = processTotalDimension( __p.x );
+			//__p.y = processTotalDimension( __p.y );
+			
+			//__p.normalize( 10.0 + __p.length * .400 );
+			__p.normalize( 10.0 );
 			
 			return __p;
 		}
 		
 		private function processTotalDimension( value:Number ):Number 
 		{
+			return value;
 			return Math.pow( Math.abs( value ) * .99, .50 ) * ( value > .0 ? 1.0 : -1.0 ) * 5.0;
 		}
 		

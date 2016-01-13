@@ -162,14 +162,14 @@ package game
 				xplo( 0xFF1111, .100 );
 				xplo( 0xFF1111, .200 );
 				xplo( 0xFF1111, .300 );
-				//die();
+				die();
 			}
 			
 			else
 			
 			if ( type == BallType.ENEMY && other.type == BallType.ENEMY )
 			{
-				xplo( 0xFF1111 );
+				//xplo( 0xFF1111 );
 			}
 			
 			else
@@ -198,7 +198,7 @@ package game
 		private function xplo( color:uint=0xFF1111, delay:Number=0.0 ):void
 		{
 			//if ( !sprite.parent )
-				return;
+				//return;
 			
 			var o:Image;
 			o = new Image ( App.assets.getTexture( "o" ) );

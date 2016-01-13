@@ -58,9 +58,9 @@ package game {
 			layerBalls = new Sprite();
 			layerUI = new Sprite();
 			rootSprite.addChild( layerBackground );
+			rootSprite.addChild( layerUI );
 			rootSprite.addChild( layerBalls );
 			rootSprite.addChild( layerDebug );
-			rootSprite.addChild( layerUI );
 			
 			pCtrl = new PlayerControl();
 		}
