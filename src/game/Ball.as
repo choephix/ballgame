@@ -25,6 +25,7 @@ package game
 		public var type:BallType;
 		
 		public var sprite:Sprite;
+		public var glall:Image;
 		private var imgBody:Image;
 		
 		public var x:Number;
@@ -57,6 +58,14 @@ package game
 			imgBody.alignPivot();
 			sprite.addChild( imgBody );
 			
+			glall = new Image ( App.assets.getTexture( "glall" ) );
+			glall.blendMode = "add";
+			glall.width =
+			glall.height = radius * 4.0;
+			glall.alignPivot();
+			sprite.addChild( glall );
+			glall.alpha = 0.0;
+			
 			//var t:TextField = new TextField( radius * 2.0, radius * 2.0, uid.toString() );
 			//t.bold = true;
 			//t.fontSize = 22.0;
@@ -82,16 +91,17 @@ package game
 					glow.scaleY = scale;
 					glow.color = color;
 					glow.blendMode = "add";
+					glow.rotation = spinSpeed * Math.PI * 2.0;
 					sprite.addChild( glow );
 					Starling.juggler.tween( glow, spinTime, { rotation : rotation, repeatCount : 0 } );
 					return glow;
 				}
 				
-				generateGlow( 1.0, 0xFFBB11, -.94 );
-				generateGlow( 1.0, 0xFFBB11, 1.41 );
+				generateGlow( 1.0, 0x22DDFF, -.94 );
+				generateGlow( 1.0, 0x22DDFF, 1.41 );
 				
-				generateGlow( 5.0, 0x792711, -.94 );
-				generateGlow( 5.0, 0x792711, 1.41 );
+				generateGlow( 5.0, 0x0E15B8, -.94 );
+				generateGlow( 5.0, 0x0E15B8, 1.41 );
 				
 				imgBody.scaleX *= .25;
 				imgBody.scaleY *= .25;

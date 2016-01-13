@@ -99,6 +99,12 @@ package game
 			{
 				for ( j = i + 1; j < vLen; j++)
 				{
+					if ( v[ j ].type == BallType.TARGET )
+					{
+						v[ i ].glall.alpha = 1.15 - ( Math.abs( v[ i ].x - v[ j ].x ) + Math.abs( v[ i ].y - v[ j ].y ) ) * .0033;
+						v[ i ].glall.rotation = getAngle( v[ i ].x, v[ i ].y, v[ j ].x, v[ j ].y );
+					}
+						
 					if ( checkForCollisionBetween( v[ i ], v[ j ] ) )
 					{
 						onCollisionBetween( v[ j ], v[ i ] );
