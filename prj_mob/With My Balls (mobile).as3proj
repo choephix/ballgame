@@ -16,9 +16,9 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="..\..\_prototype_01\lib" />
-    <class path="..\..\_prototype_01\src" />
-    <class path="..\..\_prototype_01\bat" />
+    <class path="..\lib" />
+    <class path="..\src" />
+    <class path="..\bat" />
   </classpaths>
   <!-- Build options -->
   <build>

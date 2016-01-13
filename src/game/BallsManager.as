@@ -7,10 +7,7 @@ package game
 	import starling.display.Quad;
 	import starling.events.Event;
 	import utils.Maath;
-	/**
-	 * ...
-	 * @author choephix
-	 */
+	
 	public class BallsManager 
 	{
 		private var v:Vector.<Ball>;
@@ -161,6 +158,21 @@ package game
 			
 			b1.onBallCollision( b2 );
 			b2.onBallCollision( b1 );
+			//
+			//if ( b1.type != BallType.ENEMY || b2.type != BallType.ENEMY )
+				//return;
+			
+			var alpha:Number = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
+			var midX:Number = Maath.lerp( b1.x, b2.x, .5 );
+			var midY:Number = Maath.lerp( b1.y, b2.y, .5 );
+
+			var s:SparksEffect;
+			s = new SparksEffect();
+			s.x = midX;
+			s.y = midY;
+			s.rotation = alpha;
+			spritesContainer.addChild( s );
+			s.play();
 		}
 		
 		public function bounceBall( b1:Ball, b2:Ball ):void
@@ -179,20 +191,10 @@ package game
 			var diff:Number = getAngleDiff( fi, alpha );
 			
 			if ( diff < .0 && diff > -R90 )
-			{
-				//epsilon = alpha + R90 - fi;
 				fiPrime = 2.0 * alpha + R180 - fi;
-				//fiPrime = -fiPrime;
-			}
 			else
 			if ( diff > .0 && diff < R90 )
-			{
-				//epsilon = alpha - R90 + fi;
 				fiPrime = 2.0 * alpha - R180 - fi;
-				//fiPrime = -fiPrime;
-			}
-			//else 
-				//return;
 			
 			var fLen:Number = b1.force.length ;
 			var fX:Number = Math.cos( fiPrime ) * fLen;

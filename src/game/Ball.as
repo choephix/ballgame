@@ -162,7 +162,7 @@ package game
 				xplo( 0xFF1111, .100 );
 				xplo( 0xFF1111, .200 );
 				xplo( 0xFF1111, .300 );
-				die();
+				//die();
 			}
 			
 			else
@@ -197,7 +197,7 @@ package game
 		
 		private function xplo( color:uint=0xFF1111, delay:Number=0.0 ):void
 		{
-			if ( !sprite.parent )
+			//if ( !sprite.parent )
 				return;
 			
 			var o:Image;
