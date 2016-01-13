@@ -72,24 +72,26 @@ package game
 		{
 			if ( type == BallType.TARGET )
 			{
-				var glow:Image;
+				function generateGlow( scale:Number, color:uint, spinSpeed:Number ):Image
+				{
+					var rotation:Number = spinSpeed > 0 ? Math.PI * 2.0 : -Math.PI * 2.0;
+					var spinTime:Number = 60.0 / Math.abs( spinSpeed );
+					var glow:Image = new Image ( App.assets.getTexture( "rays-large-dark" ) );
+					glow.alignPivot();
+					glow.scaleX = 
+					glow.scaleY = scale;
+					glow.color = color;
+					glow.blendMode = "add";
+					sprite.addChild( glow );
+					Starling.juggler.tween( glow, spinTime, { rotation : rotation, repeatCount : 0 } );
+					return glow;
+				}
 				
-				glow = new Image ( App.assets.getTexture( "rays-large-dark" ) );
-				glow.alignPivot();
-				glow.alpha = 1.00;
-				glow.blendMode = "add";
-				glow.color = 0xFFBB11;
-				sprite.addChild( glow );
-				Starling.juggler.tween( glow, 22.0, { rotation : Math.PI * 2.0, repeatCount : 0 } );
+				generateGlow( 1.0, 0xFFBB11, -.94 );
+				generateGlow( 1.0, 0xFFBB11, 1.41 );
 				
-				glow = new Image ( App.assets.getTexture( "rays-large-dark" ) );
-				glow.alignPivot();
-				glow.alpha = 1.00;
-				glow.blendMode = "add";
-				glow.color = 0xFFBB11;
-				sprite.addChild( glow );
-				Starling.juggler.tween( glow, 32.0, { rotation : -Math.PI * 2.0, repeatCount : 0 } );
-				glow.scaleX *= -1.0;
+				generateGlow( 5.0, 0x792711, -.94 );
+				generateGlow( 5.0, 0x792711, 1.41 );
 				
 				imgBody.scaleX *= .25;
 				imgBody.scaleY *= .25;
