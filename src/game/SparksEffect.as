@@ -13,27 +13,31 @@ package game
 	public class SparksEffect extends DisplayObjectContainer 
 	{
 		
-		public function SparksEffect() 
+		public function SparksEffect( clr:uint ) 
 		{
 			var o:Image;
 			
 			o = new Image( App.assets.getTexture( "spot") );
+			o.color = clr;
 			o.alignPivot();
 			o.alpha = .2730;
-			o.scaleX = o.scaleY = 4.5;
+			o.scaleX = o.scaleY = 9.5;
 			addChild( o );
 			
 			o = new Image( App.assets.getTexture( "spark") );
+			//o.color = clr;
 			o.alignPivot();
 			addChild( o );
 			
 			o = new Image( App.assets.getTexture( "spark") );
+			//o.color = clr;
 			o.alignPivot();
 			addChild( o );
 			o.scaleX = o.scaleY = .5;
 			o.rotation = ( .100 +.300 * Math.random() );
 			
 			o = new Image( App.assets.getTexture( "spark") );
+			//o.color = clr;
 			o.alignPivot();
 			addChild( o );
 			o.scaleX = o.scaleY = .5;

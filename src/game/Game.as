@@ -127,13 +127,13 @@ package game {
 				INITIAL_ENEMY_POSITIONS[ 2*5 + 0 ] * area.width,
 				INITIAL_ENEMY_POSITIONS[ 2*5 + 1 ] * area.height,
 				Math.random() * Math.PI * 2.0,
-				.600, 0xFF44FF, BallType.ENEMY
+				2.600, 0xFF44FF, BallType.ENEMY
 				);
 			
 			//for ( var i:int = 0; i < 6; i++ ) 
 				//addNewBall( Math.random() * area.width, Math.random() * area.width, Math.random() * Math.PI * 2.0, .44 * ( Math.random() + 1.0 ), 0xFF6644, BallType.ENEMY );
 			
-			//spawnTarget();
+			spawnTarget();
 		}
 		
 		private function destroy():void 

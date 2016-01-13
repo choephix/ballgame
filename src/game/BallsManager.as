@@ -154,25 +154,21 @@ package game
 				
 				bounceBall( b1, b2 );
 				bounceBall( b2, b1 );
+			
+				var alpha:Number = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
+				var midX:Number = Maath.lerp( b1.x, b2.x, .5 );
+				var midY:Number = Maath.lerp( b1.y, b2.y, .5 );
+				var s:SparksEffect;
+				s = new SparksEffect( 0xFF0000 );
+				s.x = midX;
+				s.y = midY;
+				s.rotation = alpha;
+				spritesContainer.addChild( s );
+				s.play();
 			}
 			
 			b1.onBallCollision( b2 );
 			b2.onBallCollision( b1 );
-			//
-			//if ( b1.type != BallType.ENEMY || b2.type != BallType.ENEMY )
-				//return;
-			
-			var alpha:Number = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
-			var midX:Number = Maath.lerp( b1.x, b2.x, .5 );
-			var midY:Number = Maath.lerp( b1.y, b2.y, .5 );
-
-			var s:SparksEffect;
-			s = new SparksEffect();
-			s.x = midX;
-			s.y = midY;
-			s.rotation = alpha;
-			spritesContainer.addChild( s );
-			s.play();
 		}
 		
 		public function bounceBall( b1:Ball, b2:Ball ):void
