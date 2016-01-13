@@ -56,16 +56,14 @@ package game {
 			layerBalls = new Sprite();
 			layerUI = new Sprite();
 			rootSprite.addChild( layerBackground );
+			rootSprite.addChild( layerUI );
 			rootSprite.addChild( layerBalls );
 			rootSprite.addChild( layerDebug );
-			rootSprite.addChild( layerUI );
 		}
 		
 		public function initialize():void {
 			
-			area = new GameArea( App.stage.stageWidth, App.stage.stageHeight - 50 );
-			layerDebug.y = 50;
-			layerBalls.y = 50;
+			area = new GameArea( App.stage.stageWidth, App.stage.stageHeight );
 			
 			analizer = new GameArenaAnalizer();
 			analizer.initialize( area );
@@ -74,7 +72,7 @@ package game {
 			balls = new BallsManager();
 			balls.initialize( layerBalls, area );
 			
-			tAction = new TextField( 500, 50, "...", "Verdana", 32, 0x0 );
+			tAction = new TextField( App.stage.stageWidth, App.stage.stageHeight, "...", "Roboto", 96, 0x445577 );
 			layerUI.addChild( tAction );
 			
 			App.stage.addEventListener( EnterFrameEvent.ENTER_FRAME, onEnterFrame );

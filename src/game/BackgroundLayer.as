@@ -14,7 +14,6 @@ package game
 		{
 			super();
 			addChild( new Quad( App.stage.stageWidth, App.stage.stageHeight, 0x202429 ) );
-			addChild( new Quad( App.stage.stageWidth, 50, 0xEEEEEE ) );
 		}
 		
 	}

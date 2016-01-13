@@ -91,8 +91,8 @@ package game
 				Starling.juggler.tween( glow, 32.0, { rotation : -Math.PI * 2.0, repeatCount : 0 } );
 				glow.scaleX *= -1.0;
 				
-				imgBody.scaleX *= .1;
-				imgBody.scaleY *= .1;
+				imgBody.scaleX *= .25;
+				imgBody.scaleY *= .25;
 			}
 			
 			isCorporeal = type != BallType.TARGET;
