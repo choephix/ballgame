@@ -8,15 +8,15 @@
   <compiler>
     <define append="true">
       <name>CONFIG::debug</name>
-      <value>true</value>
-    </define>
-    <define append="true">
-      <name>CONFIG::release</name>
       <value>false</value>
     </define>
     <define append="true">
+      <name>CONFIG::release</name>
+      <value>true</value>
+    </define>
+    <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'04-Jan-16'</value>
+      <value>'13-Jan-16'</value>
     </define>
     <define append="true">
       <name>CONFIG::air</name>
@@ -30,19 +30,21 @@
       <name>CONFIG::desktop</name>
       <value>true</value>
     </define>
-    <verbose-stacktraces>true</verbose-stacktraces>
+    <optimize>true</optimize>
+    <omit-trace-statements>true</omit-trace-statements>
+    <verbose-stacktraces>false</verbose-stacktraces>
     <source-path append="true">
-      <path-element>D:\Projects - Flash\_prototype_01\src</path-element>
-      <path-element>D:\Projects - Flash\_prototype_01\lib</path-element>
-      <path-element>D:\Projects - Flash\_prototype_01\assets</path-element>
-      <path-element>C:\Program Files (Portable)\FlashDevelop\Library\AS3\classes</path-element>
+      <path-element>D:\Projects\Balls\src</path-element>
+      <path-element>D:\Projects\Balls\lib</path-element>
+      <path-element>D:\Projects\Balls\assets</path-element>
+      <path-element>D:\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
     <library-path append="true">
-      <path-element>D:\Projects - Flash\_prototype_01\lib\starling.swc</path-element>
+      <path-element>D:\Projects\Balls\lib\starling.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>
-    <path-element>D:\Projects - Flash\_prototype_01\src\Main.as</path-element>
+    <path-element>D:\Projects\Balls\src\Main.as</path-element>
   </file-specs>
   <default-background-color>#FFFFFF</default-background-color>
   <default-frame-rate>30</default-frame-rate>

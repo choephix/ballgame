@@ -12,7 +12,7 @@ package game
 	public class Ball extends EventDispatcher
 	{
 		private static var NEXT_UID:uint = 1;
-		public static const SPEED_MULTIPLIER:Number = 5;
+		public static const SPEED_MULTIPLIER:Number = 20;
 		
 		public var uid:uint = 0;
 		
@@ -33,6 +33,7 @@ package game
 		
 		public var isDead:Boolean = false;
 		
+		public var __lastCollision:Number = 0.0;
 		public var __v:Vector.<Ball> = new Vector.<Ball>();
 		
 		public function Ball( color:uint, radius:Number = 24.0 )
@@ -117,7 +118,7 @@ package game
 		
 		public function onBallCollision( other:Ball ):void
 		{
-			return;
+			//return;
 			
 			if ( type == BallType.PLAYER && other.type == BallType.ENEMY )
 			{
@@ -125,7 +126,7 @@ package game
 				xplo( 0xFF1111, .100 );
 				xplo( 0xFF1111, .200 );
 				xplo( 0xFF1111, .300 );
-				die();
+				//die();
 			}
 			
 			else
@@ -160,7 +161,7 @@ package game
 		
 		private function xplo( color:uint=0xFF1111, delay:Number=0.0 ):void
 		{
-			if ( !sprite.parent )
+			//if ( !sprite.parent )
 				return;
 			
 			var o:Image;

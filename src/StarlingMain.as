@@ -33,8 +33,11 @@ package {
 			App.stage = stage;
 			App.assets = new AssetManager();
 			App.assets.enqueue( "assets/o.png" );
+			App.assets.enqueue( "assets/spot.png" );
+			App.assets.enqueue( "assets/spark.png" );
 			App.assets.loadQueue( onAssetsLoadingProgress );
 			
+			App.initialize();
 		}
 		
 		private function onAssetsLoadingProgress( ratio:Number ):void {
@@ -49,8 +52,6 @@ package {
 		
 		private function onAssetsLoaded():void 
 		{
-			
-			
 			startGame();
 		}
 		

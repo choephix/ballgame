@@ -1,15 +1,13 @@
 package game 
 {
 	import flash.geom.Point;
+	import flash.utils.getTimer;
 	import starling.core.Starling;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Quad;
 	import starling.events.Event;
 	import utils.Maath;
-	/**
-	 * ...
-	 * @author choephix
-	 */
+	
 	public class BallsManager 
 	{
 		private var v:Vector.<Ball>;
@@ -100,7 +98,7 @@ package game
 				{
 					if ( checkForCollisionBetween( v[ i ], v[ j ] ) )
 					{
-						onBallsCollision( v[ j ], v[ i ] );
+						onCollisionBetween( v[ j ], v[ i ] );
 						//onBallsCollision( v[ i ], v[ j ] );
 					}
 				}
@@ -110,6 +108,11 @@ package game
 		
 		public function checkForCollisionBetween( b1:Ball, b2:Ball ):Boolean
 		{
+			//if ( getTimer() - b1.__lastCollision < 70 || getTimer() - b2.__lastCollision < 70 )
+				//return false;
+				
+			///
+			
 			if ( b1.x - b1.radius > b2.x + b2.radius )
 				return false;
 			
@@ -130,80 +133,79 @@ package game
 			return true
 		}
 		
-		public function onBallsCollision( b1:Ball, b2:Ball ):void
+		public function onCollisionBetween( b1:Ball, b2:Ball ):void
 		{
-			//if ( b1.type == BallType.PLAYER && b2.type == BallType.TARGET )
+			Game.current.layerDebug.clearTemp();
+			
+			if ( b1.type != BallType.TARGET && b2.type != BallType.TARGET )
+			{
+			
+				if ( App.isDownCtrl && ( b1.type == BallType.PLAYER || b2.type == BallType.PLAYER ) )
+				{
+					Game.current.layerDebug.mark( b1.x, b1.y, 0x00FFFF );
+					Game.current.layerDebug.mark( b2.x, b2.y, 0x00FFFF );
+					Game.current.state = GameState.PAUSED;
+				}
+				
+				bounceBall( b1, b2 );
+				bounceBall( b2, b1 );
+			}
+			
+			b1.onBallCollision( b2 );
+			b2.onBallCollision( b1 );
+			//
+			//if ( b1.type != BallType.ENEMY || b2.type != BallType.ENEMY )
 				//return;
 			
-			var radiusSum:Number = b1.radius + b2.radius;
-			var radiusRatio1:Number = b1.radius / radiusSum;
-			var radiusRatio2:Number = 1.0 - radiusRatio1;
-				
-			var midX:Number = Maath.lerp( b1.x, b2.x, radiusRatio1 );
-			var midY:Number = Maath.lerp( b1.y, b2.y, radiusRatio1 );
+			var alpha:Number = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
+			var midX:Number = Maath.lerp( b1.x, b2.x, .5 );
+			var midY:Number = Maath.lerp( b1.y, b2.y, .5 );
 
-			//var o:Quad = new Quad( 5, 5 );
-			//o.x = midX;
-			//o.y = midY;
-			//o.alignPivot();
-			//spritesContainer.addChild( o );
-			//Starling.juggler.delayCall( o.removeFromParent, .045, true );
-			
-			bounceBall( b1, b2 );
-			bounceBall( b2, b1 );
-			
-			const FIX:Number = 1.1;
-			var fi:Number;
-			fi = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
-			b1.setPosition( midX - FIX * Math.cos( fi ) * b1.radius, midY - FIX * Math.sin( fi ) * b1.radius );
-			b2.setPosition( midX + FIX * Math.cos( fi ) * b2.radius, midY + FIX * Math.sin( fi ) * b2.radius );
-			
-			//b1.onBallCollision( b2 );
-			//b2.onBallCollision( b1 );
+			var s:SparksEffect;
+			s = new SparksEffect();
+			s.x = midX;
+			s.y = midY;
+			s.rotation = alpha;
+			spritesContainer.addChild( s );
+			s.play();
 		}
 		
 		public function bounceBall( b1:Ball, b2:Ball ):void
 		{
+			b1.__lastCollision = getTimer();
+			
 			const R180:Number = Math.PI;
 			const R90:Number = R180 * .5;
 			
 			var alpha:Number = getAngle( b1.position.x, b1.position.y, b2.position.x, b2.position.y );
 			var fi:Number = getAngle( 0.0, 0.0, b1.getForce().x, b1.getForce().y );
 			
-			var fiPrime:Number = alpha + Math.PI;
+			var fiPrime:Number = Math.PI + alpha;
 			var epsilon:Number = NaN;
 			
 			var diff:Number = getAngleDiff( fi, alpha );
 			
 			if ( diff < .0 && diff > -R90 )
-			{
-				epsilon = alpha + R90 - fi;
-				fiPrime = fi + 2.0 * epsilon;
-			}
+				fiPrime = 2.0 * alpha + R180 - fi;
 			else
 			if ( diff > .0 && diff < R90 )
+				fiPrime = 2.0 * alpha - R180 - fi;
+			
+			var fLen:Number = b1.force.length ;
+			var fX:Number = Math.cos( fiPrime ) * fLen;
+			var fY:Number = Math.sin( fiPrime ) * fLen;
+			
+			b1.setForce( fX, fY );
+			//b1.startMoving( fiPrime, b1.force.length / Ball.SPEED_MULTIPLIER );
+			
+			if ( App.isDownShift && b1.type == BallType.PLAYER )
 			{
-				epsilon = alpha - R90 + fi;
-				fiPrime = fi + 2.0 * epsilon;
+				const TIME:Number = NaN;
+				Game.current.layerDebug.markBallAngle( b1, alpha, 0xFFFFFF, TIME );
+				Game.current.layerDebug.markBallAngle( b1, fi, 0x0, TIME );
+				Game.current.layerDebug.markBallAngle( b1, fiPrime, 0xFF8000, TIME );
+				Game.current.state = GameState.PAUSED;
 			}
-			
-			b1.startMoving( fiPrime, b1.force.length / Ball.SPEED_MULTIPLIER );
-			
-			const TIME:Number = 5.0;
-			markBallAngle( b1, alpha, 0xFFFFFF, TIME );
-			markBallAngle( b1, fi, 0x0, TIME );
-			markBallAngle( b1, fiPrime, 0xFF8000, TIME );
-			//Game.current.state = GameState.PAUSED;
-		}
-		
-		private function markBallAngle( b:Ball, fi:Number, color:uint, time:Number = .033 ):void
-		{
-			var o:Quad = new Quad( 5, 5, color );
-			o.x = b.x + Math.cos( fi ) * b.radius;
-			o.y = b.y + Math.sin( fi ) * b.radius;
-			o.alignPivot();
-			spritesContainer.addChild( o );
-			Starling.juggler.delayCall( o.removeFromParent, time, true );
 		}
 		
 		private function getDotProduct( x1:Number, y1:Number, x2:Number, y2:Number ):Number
@@ -217,7 +219,7 @@ package game
 			var r:Number = a - b; 
 			while (r < -Math.PI) r += 2*Math.PI;
 			while (r > Math.PI) r -= 2*Math.PI;
-			return r;
+			return -r;
 		}
 		///
 		
