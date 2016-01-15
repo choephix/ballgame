@@ -2,6 +2,7 @@ package game
 {
 	import flash.events.AccelerometerEvent;
 	import flash.sensors.Accelerometer;
+	import starling.text.TextField;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Image;
 	import starling.events.EnterFrameEvent;
@@ -18,18 +19,29 @@ package game
 		
 		private var targetRotation:Number = 0.0;
 		
+		private var tScore:TextField;
+		
 		public function GameUI() 
 		{
 			super();
 			
 			var o:Image;
-			o = new Image( App.assets.getTexture( "fakeui") );
+			o = new Image( App.assets.getTexture( "fakeui" ) );
 			o.alignPivot();
 			addChild( o );
+			
+			tScore = new TextField( o.width, .5 * o.height, "...", "sans" );
+			tScore.fontSize = 96;
+			tScore.color = 0x444455;
+			tScore.hAlign = "center";
+			tScore.vAlign = "center";
+			tScore.alignPivot( "center", "bottom" );
+			addChild( tScore );
 			
 			if ( Accelerometer.isSupported )
 			{
 				acc = new Accelerometer();
+				acc.setRequestedUpdateInterval( 400 );
 				acc.addEventListener( AccelerometerEvent.UPDATE, onAccelerometerUpdate );
 				addEventListener( EnterFrameEvent.ENTER_FRAME, onEnterFrame );
 			}
@@ -39,10 +51,12 @@ package game
 		
 		override public function dispose():void 
 		{
-			acc.removeEventListener( AccelerometerEvent.UPDATE, onAccelerometerUpdate );
-			removeEventListener( EnterFrameEvent.ENTER_FRAME, onEnterFrame );
+			if ( acc != null ) {
+				acc.removeEventListener( AccelerometerEvent.UPDATE, onAccelerometerUpdate );
+				acc = null;
+			}
 			
-			acc = null;
+			removeEventListener( EnterFrameEvent.ENTER_FRAME, onEnterFrame );
 			
 			super.dispose();
 		}
@@ -83,6 +97,11 @@ package game
 				"Z " + e.accelerationZ.toFixed(2) + 
 				"\n" + 
 				"N " + n.toFixed(2);
+		}
+		
+		public function setScore( value:int ):void
+		{
+			tScore.text = value.toString();
 		}
 		
 	}

@@ -34,8 +34,6 @@ package game {
 		
 		/// UI
 		
-		private var tAction:TextField;
-		
 		private var playerBall:Ball;
 		private static var helperPoint:Point = new Point();
 		
@@ -45,6 +43,7 @@ package game {
 		private var balls:BallsManager;
 		
 		private var pCtrl:PlayerControl;
+		private var uiWheel:GameUI;
 		///
 		
 		public function Game() {
@@ -76,9 +75,8 @@ package game {
 			balls = new BallsManager();
 			balls.initialize( layerBalls, area );
 			
-			tAction = new TextField( App.stage.stageWidth, App.stage.stageHeight, "...", "Roboto", 64, 0x445577 );
-			layerUI.addChild( new GameUI() );
-			layerUI.addChild( tAction );
+			uiWheel = new GameUI();
+			layerUI.addChild( uiWheel );
 			
 			App.stage.addEventListener( EnterFrameEvent.ENTER_FRAME, onEnterFrame );
 			App.stage.addEventListener( TouchEvent.TOUCH, onTouch );
@@ -156,8 +154,8 @@ package game {
 			rootSprite.removeFromParent( true );
 			rootSprite = null;
 			
-			tAction.removeFromParent( true );
-			tAction = null;
+			uiWheel.removeFromParent( true );
+			uiWheel = null;
 			
 			playerBall = null;
 			state = null;
@@ -323,7 +321,7 @@ package game {
 			if ( ball.type == BallType.TARGET )
 			{
 				playerBall.anim_OnGetTarget();
-				tAction.text = (++score).toString();
+				uiWheel.setScore( ++score );
 				spawnTarget();
 			}
 		}

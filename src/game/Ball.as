@@ -100,8 +100,8 @@ package game
 				generateGlow( 1.0, 0x22DDFF, -.94 );
 				generateGlow( 1.0, 0x22DDFF, 1.41 );
 				
-				generateGlow( 5.0, 0x0E15B8, -.94 );
-				generateGlow( 5.0, 0x0E15B8, 1.41 );
+				generateGlow( 6.0, 0x0E15B8, -.94 );
+				generateGlow( 6.0, 0x0E15B8, 1.41 );
 				
 				imgBody.scaleX *= .25;
 				imgBody.scaleY *= .25;
