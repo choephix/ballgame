@@ -13,7 +13,7 @@ if exist "%FD_CUR_SDK%" set FLEX_SDK=%FD_CUR_SDK%
 set AUTO_INSTALL_IOS=yes
 
 :: Path to Android SDK
-set ANDROID_SDK=D:\FlashDevelop\Tools\android
+set ANDROID_SDK=D:\OneDrive\Portable Program Files\FlashDevelop\Tools\android
 
 :validation
 if not exist "%FLEX_SDK%\bin" goto flexsdk

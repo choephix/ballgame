@@ -38,6 +38,9 @@ package {
 			App.assets.enqueue( "assets/score-up-glow.png" );
 			App.assets.enqueue( "assets/spot.png" );
 			App.assets.enqueue( "assets/spark.png" );
+			App.assets.enqueue( "assets/wave.png" );
+			App.assets.enqueue( "assets/bg.png" );
+			App.assets.enqueue( "assets/fakeui.png" );
 			App.assets.loadQueue( onAssetsLoadingProgress );
 			
 			App.initialize();

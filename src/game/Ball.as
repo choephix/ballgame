@@ -12,7 +12,7 @@ package game
 	public class Ball extends EventDispatcher
 	{
 		private static var NEXT_UID:uint = 1;
-		public static const SPEED_MULTIPLIER:Number = 8;
+		public static const SPEED_MULTIPLIER:Number = 6.5;
 		
 		public var uid:uint = 0;
 		
@@ -93,7 +93,7 @@ package game
 					glow.blendMode = "add";
 					glow.rotation = spinSpeed * Math.PI * 2.0;
 					sprite.addChild( glow );
-					Starling.juggler.tween( glow, spinTime, { rotation : rotation, repeatCount : 0 } );
+					Starling.juggler.tween( glow, spinTime, { rotation : glow.rotation + rotation, repeatCount : 0 } );
 					return glow;
 				}
 				

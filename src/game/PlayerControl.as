@@ -51,7 +51,7 @@ package game
 			//__p.y = processTotalDimension( __p.y );
 			
 			//__p.normalize( 10.0 + __p.length * .400 );
-			__p.normalize( 10.0 );
+			__p.normalize( 5.0 );
 			
 			return __p;
 		}

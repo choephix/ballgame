@@ -12,6 +12,8 @@ package game
 	 */
 	public class DebugLayer extends DisplayObjectContainer 
 	{
+		public static var data:String = "";
+		
 		private static const DOT_SIZE:Number = 4.0;
 		
 		private var analizer:GameArenaAnalizer;

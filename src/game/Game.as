@@ -76,7 +76,8 @@ package game {
 			balls = new BallsManager();
 			balls.initialize( layerBalls, area );
 			
-			tAction = new TextField( App.stage.stageWidth, App.stage.stageHeight, "...", "Roboto", 96, 0x445577 );
+			tAction = new TextField( App.stage.stageWidth, App.stage.stageHeight, "...", "Roboto", 64, 0x445577 );
+			layerUI.addChild( new GameUI() );
 			layerUI.addChild( tAction );
 			
 			App.stage.addEventListener( EnterFrameEvent.ENTER_FRAME, onEnterFrame );
@@ -221,9 +222,12 @@ package game {
 				balls.advance( e.passedTime );
 				markThings();
 			}
+				
+				//tAction.text = DebugLayer.data;
 		}
 		
-		private function onTouch(e:TouchEvent):void {
+		private function onTouch(e:TouchEvent):void
+		{
 			
 			const SPD:Number = 66.67;
 			
@@ -265,7 +269,8 @@ package game {
 			
 		}
 		
-		private function onKeyUp(e:KeyboardEvent):void {
+		private function onKeyUp(e:KeyboardEvent):void
+		{
 			
 			const a:Array = [ UserAction.SPLIT_VERTICAL, UserAction.SPLIT_HORISONTAL, UserAction.ADD_BALL ];
 			
