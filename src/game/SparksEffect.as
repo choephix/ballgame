@@ -42,18 +42,38 @@ package game
 			addChild( o );
 			o.scaleX = o.scaleY = .5;
 			o.rotation = -(.100 +.300 * Math.random() );
+			
+			o = new Image( App.assets.getTexture( "wave") );
+			o.color = clr;
+			o.alignPivot();
+			addChild( o );
+			o.scaleX = o.scaleY = .5;
 		}
 		
 		public function play():void
 		{
 			const TIME:Number = .290;
+			
 			var o:DisplayObject;
-			for ( var i:int = 1; i < numChildren; i++ ) 
+			for ( var i:int = 1; i < numChildren - 1; i++ ) 
 			{
 				o = getChildAt( i );
 				Starling.juggler.tween( o, TIME, { scaleX : .010, scaleY : o.scaleY * 2.0, alpha : .0 , transition : Transitions.EASE_OUT } );
 			}
-			Starling.juggler.tween( getChildAt(0), TIME, { alpha : .0 } );
+			
+			o = getChildAt( 0 );
+			Starling.juggler.tween( o, TIME, { alpha : .0 } );
+			
+			o = getChildAt( numChildren - 1 );
+			o.alpha = .40;
+			o.scaleX = .2;
+			o.scaleY = .2;
+			Starling.juggler.tween( o, .440, { alpha : .0, scaleX : 5.0, scaleY : 5.0, transition : Transitions.LINEAR } );
+			parent.addChild( o );
+			o.x = x;
+			o.y = y;
+			o.rotation = rotation + Math.PI * .5;
+			
 			Starling.juggler.delayCall( removeFromParent, TIME + .100, true );
 		}
 		
